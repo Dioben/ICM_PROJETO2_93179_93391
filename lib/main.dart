@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:track_keeper/widgets/start-load.dart';
 
 void main() {
-  runApp(MyApp());
+  runApp(MaterialApp(home: StartLoad(),));
 }
 
 class MyApp extends StatelessWidget {
