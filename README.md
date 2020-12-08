@@ -1,6 +1,6 @@
 # Track Keeper
 
-A bike tracker made in FLutter,with location and accelerometer capabilities and social aspects
+A bike tracker made in Flutter,with location and accelerometer capabilities and social aspects
 
 ## Getting Started
 Android Studio recommends the following:
