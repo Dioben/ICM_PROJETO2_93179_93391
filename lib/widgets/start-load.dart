@@ -31,7 +31,7 @@ class _StartLoadState extends State<StartLoad>
     _animation = CurvedAnimation(
       parent: _controller,
       curve: const Interval(0.0, 0.9, curve: Curves.linear),
-      reverseCurve: Curves.fastOutSlowIn,
+      reverseCurve: Curves.linear,
     );
   }
 
@@ -45,7 +45,7 @@ class _StartLoadState extends State<StartLoad>
 
   Widget _buildIndicators(BuildContext context, Widget child) {
 
-        return CircularProgressIndicator(strokeWidth: 5,valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC0C0C0)),);
+        return CircularProgressIndicator(strokeWidth: 8,valueColor: AlwaysStoppedAnimation<Color>(const Color(0xFFC0C0C0)),);
 
   }
 
