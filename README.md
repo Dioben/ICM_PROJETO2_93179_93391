@@ -1,6 +1,6 @@
-# track_keeper
+# Track Keeper
 
-Bike tracker
+A bike tracker made in FLutter,with location and accelerometer capabilities and social aspects
 
 ## Getting Started
 Android Studio recommends the following:
