@@ -3,7 +3,6 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
-import 'package:track_keeper/main.dart';
 import 'package:track_keeper/widgets/mainmenu.dart';
 
 
@@ -81,7 +80,7 @@ class _StartLoadState extends State<StartLoad>
                       ],
                     ),
                   )
-                  ,RaisedButton(child: Text("debug skip button"),onPressed: skipAhead,)
+                  ,ElevatedButton(child: Text("debug skip button"),onPressed: skipAhead,style: ElevatedButton.styleFrom(primary: Colors.grey),)
                   ]
                 ),
               ),

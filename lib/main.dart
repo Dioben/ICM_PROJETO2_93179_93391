@@ -12,6 +12,8 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
+        accentColor: Colors.greenAccent,
+        primaryColor: Colors.green,
         // This is the theme of your application.
         //
         // Try running your application with "flutter run". You'll see the
@@ -21,7 +23,8 @@ class MyApp extends StatelessWidget {
         // or simply save your changes to "hot reload" in a Flutter IDE).
         // Notice that the counter didn't reset back to zero; the application
         // is not restarted.
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.green,
+        elevatedButtonTheme: ElevatedButtonThemeData(style: ButtonStyle(backgroundColor: MaterialStateProperty.all(Colors.green)))
       ),
       home: MyHomePage(title: 'Flutter Demo Home Page'),
     );

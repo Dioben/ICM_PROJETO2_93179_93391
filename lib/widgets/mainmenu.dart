@@ -7,27 +7,41 @@ class MainMenu extends StatelessWidget{
     // TODO: implement build
     return Scaffold(
 
-      body:Padding(
-        padding: const EdgeInsets.symmetric(vertical: 150,horizontal: 20),
-        child: Center(
-          child: Column(children: [
-            Stack(
-            children: [ Text("Track Keeper",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,foreground: Paint()..style=PaintingStyle.stroke..strokeWidth=3..color=Colors.black),),
-              Text("Track Keeper",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.green),),],
-          ),
-            SizedBox(height:20),
-            RaisedButton(child: Text("Free Play"),),
-            SizedBox(height:20),
-            RaisedButton(child: Text("Tracks"),),
-            SizedBox(height:20),
-            RaisedButton(child: Text("User Stats"),),
-            SizedBox(height:20),
-            Row(mainAxisAlignment:MainAxisAlignment.center,children: [RaisedButton(child: Text("Logout")),SizedBox(width: 10,),RaisedButton(child: Text("Settings"))],),
+      body:Padding(//maybe replace with column/expanded
+        padding: const EdgeInsets.symmetric(vertical: 150,),
 
-          ],
+        child: Row(
+          children: [
+            Spacer(flex: 2,),
+            Expanded(
+              flex: 6,
+              child: Center(
+                child: Column(children: [
+                  
+                  Expanded(
+                    flex:4,
+                    child: Stack(
+                    children: [ Text("Track Keeper",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,foreground: Paint()..style=PaintingStyle.stroke..strokeWidth=3..color=Colors.black),),
+                      Text("Track Keeper",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.green),),],
+                ),
+                  ),
+                  Spacer(flex:2),
+                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Free Play"),onPressed: (){},)..themeStyleOf(context))),
+                  Spacer(flex:2),
+                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Tracks"),onPressed: (){},))),
+                  Spacer(flex:2),
+                  Expanded(flex:5 ,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("User Stats"),onPressed: (){},))),
+                  Spacer(flex:2),
+                  Expanded(flex:5,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: [Expanded(flex:8,child: SizedBox(height:double.infinity,child: ElevatedButton(child: Text("Logout"),onPressed: (){},))),Spacer(flex:1),Expanded(flex:8,child: SizedBox(height: double.infinity,child: ElevatedButton(child: Text("Settings"),onPressed: (){},)))],)),
 
-          ),
+                ],
+
+                ),
     ),
+            ),
+            Spacer(flex: 2,),
+          ],
+        ),
       ),
     );
   }
