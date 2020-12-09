@@ -4,6 +4,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:track_keeper/main.dart';
+import 'package:track_keeper/widgets/mainmenu.dart';
 
 
 
@@ -92,7 +93,7 @@ class _StartLoadState extends State<StartLoad>
   }
 
   void skipAhead() {
-  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MyApp()));
+  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MainMenu()));
   }
 }
 
