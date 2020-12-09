@@ -3,6 +3,7 @@
 // found in the LICENSE file.
 
 import 'package:flutter/material.dart';
+import 'package:track_keeper/main.dart';
 
 
 
@@ -91,7 +92,7 @@ class _StartLoadState extends State<StartLoad>
   }
 
   void skipAhead() {
-  //navigate somewhere else here
+  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MyApp()));
   }
 }
 
