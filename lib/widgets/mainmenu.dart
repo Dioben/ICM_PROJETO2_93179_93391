@@ -26,7 +26,7 @@ class MainMenu extends StatelessWidget{
                 ),
                   ),
                   Spacer(flex:2),
-                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Free Play"),onPressed: (){},)..themeStyleOf(context))),
+                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Free Play"),onPressed: freePlay(context)))),
                   Spacer(flex:2),
                   Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Tracks"),onPressed: (){},))),
                   Spacer(flex:2),
@@ -45,4 +45,9 @@ class MainMenu extends StatelessWidget{
       ),
     );
   }
+
+  freePlay(context){
+    Navigator.push(context,MaterialPageRoute(builder: (context) => TrackingActivity()));
+  }
+
 }
