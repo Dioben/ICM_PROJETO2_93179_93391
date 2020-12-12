@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:track_keeper/widgets/track-list.dart';
+import 'package:track_keeper/widgets/tracking.dart';
+import 'package:track_keeper/widgets/user-info.dart';
 
 class MainMenu extends StatelessWidget{
   @override
@@ -26,11 +29,11 @@ class MainMenu extends StatelessWidget{
                 ),
                   ),
                   Spacer(flex:2),
-                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Free Play"),onPressed: freePlay(context)))),
+                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Free Play"),onPressed: ()=>freePlay(context)))),
                   Spacer(flex:2),
-                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Tracks"),onPressed: (){},))),
+                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Tracks"),onPressed: ()=>viewTracks(context),))),
                   Spacer(flex:2),
-                  Expanded(flex:5 ,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("User Stats"),onPressed: (){},))),
+                  Expanded(flex:5 ,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("User Stats"),onPressed:()=> userInfo(context),))),
                   Spacer(flex:2),
                   Expanded(flex:5,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: [Expanded(flex:8,child: SizedBox(height:double.infinity,child: ElevatedButton(child: Text("Logout"),onPressed: (){},))),Spacer(flex:1),Expanded(flex:8,child: SizedBox(height: double.infinity,child: ElevatedButton(child: Text("Settings"),onPressed: (){},)))],)),
 
@@ -49,5 +52,10 @@ class MainMenu extends StatelessWidget{
   freePlay(context){
     Navigator.push(context,MaterialPageRoute(builder: (context) => TrackingActivity()));
   }
-
+  userInfo(context){
+    Navigator.push(context,MaterialPageRoute(builder: (context) => UserStats()));
+  }
+  viewTracks(context){
+    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewTrackList()));
+  }
 }

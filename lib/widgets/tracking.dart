@@ -1,6 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
+import 'shared.dart';
+
 class TrackingActivity extends StatefulWidget{
   const TrackingActivity({Key key}) : super(key: key);
   @override
@@ -9,13 +11,13 @@ class TrackingActivity extends StatefulWidget{
 }
 
 class _TrackingState extends State<TrackingActivity>{
-  bool recording;
+  bool recording=false;
   @override
   Widget build(BuildContext context) {
     //this should return different things if recording or not recording
     if (!recording){
     return Scaffold(
-      appBar: AppBar(title: const Text("Tracking"),actions: [IconButton(icon: const Icon(Icons.play_arrow),tooltip: "Start recording",onPressed: startRecording(),)]
+      appBar: AppBar(title: const Text("Tracking"),actions: [IconButton(icon: const Icon(Icons.play_arrow),tooltip: "Start recording",onPressed: ()=>startRecording(),)]
         ,),
     body: ReusableTrackingLayout(),//implement this in the shared file    
     );}
