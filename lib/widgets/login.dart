@@ -7,10 +7,12 @@ class LoginMenu extends StatefulWidget{
 
 class LoginState extends State<LoginMenu>{
   bool logging = false; //display a spinny thing while logging in i guess
+  String name;//putting this here in case we've gotta persist this on failed logins
+  String password;
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Scaffold(appBar: AppBar(title: Text("Settings"),),
+    return Scaffold(
         body: Text("TBA"));
   }
 
