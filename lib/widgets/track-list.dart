@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
 
 class ViewTrackList extends StatefulWidget{
   @override
@@ -9,6 +9,7 @@ class ViewListState extends State<ViewTrackList>{
   @override
   Widget build(BuildContext context) {
     // TODO: implement build
-    return Text("TBA");
+    return Scaffold(appBar: AppBar(title: Text("Track List"),),
+        body: Text("TBA"));
   }
 }

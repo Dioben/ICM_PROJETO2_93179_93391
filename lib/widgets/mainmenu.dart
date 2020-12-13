@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:track_keeper/widgets/settings.dart';
 import 'package:track_keeper/widgets/track-list.dart';
 import 'package:track_keeper/widgets/tracking.dart';
 import 'package:track_keeper/widgets/user-info.dart';
@@ -35,7 +36,7 @@ class MainMenu extends StatelessWidget{
                   Spacer(flex:2),
                   Expanded(flex:5 ,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("User Stats"),onPressed:()=> userInfo(context),))),
                   Spacer(flex:2),
-                  Expanded(flex:5,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: [Expanded(flex:8,child: SizedBox(height:double.infinity,child: ElevatedButton(child: Text("Logout"),onPressed: (){},))),Spacer(flex:1),Expanded(flex:8,child: SizedBox(height: double.infinity,child: ElevatedButton(child: Text("Settings"),onPressed: (){},)))],)),
+                  Expanded(flex:5,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: [Expanded(flex:8,child: SizedBox(height:double.infinity,child: ElevatedButton(child: Text("Logout"),onPressed: ()=>toLogin(context),))),Spacer(flex:1),Expanded(flex:8,child: SizedBox(height: double.infinity,child: ElevatedButton(child: Text("Settings"),onPressed: ()=>viewSettings(context),)))],)),
 
                 ],
 
@@ -57,5 +58,11 @@ class MainMenu extends StatelessWidget{
   }
   viewTracks(context){
     Navigator.push(context,MaterialPageRoute(builder: (context) => ViewTrackList()));
+  }
+  viewSettings(context){
+    Navigator.push(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
+  }
+  toLogin(context){
+    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
   }
 }
