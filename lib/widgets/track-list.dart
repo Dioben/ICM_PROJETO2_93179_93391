@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:track_keeper/widgets/track-info.dart';
 
 class ViewTrackList extends StatefulWidget{
   @override
@@ -13,8 +14,14 @@ class ViewListState extends State<ViewTrackList>{
         body: Column(children: [Expanded(flex: 3,child: TrackTypeSelector(notifyParent: updateSelection,)),
                                 Expanded(flex: 9,
                                     child:SingleChildScrollView(
-                                    child: ListView(children: [ElevatedButton(child: Text("Track A"),onPressed: (){},)],),
-                                ))
+                                    child:ListView.separated(shrinkWrap: true,
+                                        itemBuilder: (BuildContext context,int index){
+                                          return InkWell(child: Ink(color: Colors.green,height: 50,child: Text("TRACK"),) ,onTap: ()=>goToInfo(),);
+                                        },
+                                        separatorBuilder: (BuildContext context, int index)=>Divider(),
+                                        itemCount: 5)
+                                )
+                                )
         ],)
         );
   }
@@ -22,6 +29,8 @@ class ViewListState extends State<ViewTrackList>{
   updateSelection(int selector,String value){
 
   }
+
+  goToInfo() { Navigator.push(context,MaterialPageRoute(builder: (context) => TrackInfoActivity()));}
 }
 
 class TrackTypeSelector extends StatefulWidget{
