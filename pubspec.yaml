@@ -23,8 +23,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  google_maps_flutter: ^1.0.6
-
+  google_maps_flutter: "^1.0.6"
+  firebase_core: "0.5.3"
 
 
 

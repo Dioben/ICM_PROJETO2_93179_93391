@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>66824415130-ph7b1ruj3hlbj5707k2jjvbrp5tm8kht.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.66824415130-ph7b1ruj3hlbj5707k2jjvbrp5tm8kht</string>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>66824415130-4ab3gjj4rtdnq56o20o3jar236te0u8e.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyBWYO_S4Q1wn1i4O2grHsTWdbNz-VJAW0I</string>
+	<key>GCM_SENDER_ID</key>
+	<string>66824415130</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>com.example.trackKeeper</string>
+	<key>PROJECT_ID</key>
+	<string>icm-proj-1</string>
+	<key>STORAGE_BUCKET</key>
+	<string>icm-proj-1.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:66824415130:ios:03ecd0ef513e59438b7c23</string>
+	<key>DATABASE_URL</key>
+	<string>https://icm-proj-1.firebaseio.com</string>
+</dict>
+</plist>

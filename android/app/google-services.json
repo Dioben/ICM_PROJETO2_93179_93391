@@ -1,0 +1,85 @@
+{
+  "project_info": {
+    "project_number": "66824415130",
+    "firebase_url": "https://icm-proj-1.firebaseio.com",
+    "project_id": "icm-proj-1",
+    "storage_bucket": "icm-proj-1.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66824415130:android:eb441e90c8979a108b7c23",
+        "android_client_info": {
+          "package_name": "com.example.icm_projeto1_93179_93391"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66824415130-4ab3gjj4rtdnq56o20o3jar236te0u8e.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.icm_projeto1_93179_93391",
+            "certificate_hash": "3f830c14a7c6f2d4acad2298eb18e682bb03d699"
+          }
+        },
+        {
+          "client_id": "66824415130-onbifu7ikb2qd2kpjuisv85sobvbqjmd.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.icm_projeto1_93179_93391",
+            "certificate_hash": "235e77d4568aa46bbdb4fa5f2a6d847eca9520a8"
+          }
+        },
+        {
+          "client_id": "66824415130-ldd38kessukpanji4kjietm4opvdilpl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvjy91-ciM3s8La6TuiF4zA4LSMZVrv4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66824415130-ldd38kessukpanji4kjietm4opvdilpl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:66824415130:android:ebb1197394b171078b7c23",
+        "android_client_info": {
+          "package_name": "com.example.track_keeper"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "66824415130-ldd38kessukpanji4kjietm4opvdilpl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAvjy91-ciM3s8La6TuiF4zA4LSMZVrv4g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "66824415130-ldd38kessukpanji4kjietm4opvdilpl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
