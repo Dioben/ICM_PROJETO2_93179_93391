@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:track_keeper/widgets/login.dart';
 import 'package:track_keeper/widgets/settings.dart';
 import 'package:track_keeper/widgets/track-list.dart';
 import 'package:track_keeper/widgets/tracking.dart';
@@ -63,6 +64,6 @@ class MainMenu extends StatelessWidget{
     Navigator.push(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
   }
   toLogin(context){
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
+    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginMenu()));
   }
 }

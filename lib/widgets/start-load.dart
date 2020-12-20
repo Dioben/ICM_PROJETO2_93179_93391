@@ -80,7 +80,6 @@ class _StartLoadState extends State<StartLoad>
                       ],
                     ),
                   )
-                  ,ElevatedButton(child: Text("debug skip button"),onPressed: skipAhead,style: ElevatedButton.styleFrom(primary: Colors.grey),)
                   ]
                 ),
               ),
@@ -91,8 +90,5 @@ class _StartLoadState extends State<StartLoad>
     );
   }
 
-  void skipAhead() {
-  Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MainMenu()));
-  }
 }
 
