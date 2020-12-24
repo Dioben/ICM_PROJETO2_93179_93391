@@ -1,10 +1,11 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:track_keeper/datamodel/course.dart';
 
-import 'shared.dart';
 
 
 const double CAMERA_ZOOM = 13;
@@ -20,31 +21,38 @@ class TrackingActivity extends StatefulWidget{
 
 class _TrackingState extends State<TrackingActivity> {
   bool recording = false;
-  bool map_ready = false;
+  StreamSubscription<Position> positionStream;
   Set<Marker> _markers;
   Set<Polyline> _polylines;
-  List<LatLng> coords;
   Course course;
-  GoogleMap constmap;
-
+  LatLng init_pos;
   _TrackingState() {
-    constmap = GoogleMap(
-      myLocationButtonEnabled: true,
-      compassEnabled: true,
-      tiltGesturesEnabled: false,
-      markers: _markers,
-      polylines: _polylines,
-      mapType: MapType.normal,
-      initialCameraPosition: const CameraPosition(
-          target: LatLng(0,0),
-          zoom: CAMERA_ZOOM,
-          tilt: CAMERA_TILT,
-          bearing: CAMERA_BEARING),
-      onMapCreated: onMapCreated,);
+    _markers = Set();
+    _polylines = Set();
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((value) {  init_pos= LatLng(value.latitude, value.longitude);setState(() {
+
+    });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    CameraPosition initialCameraPosition;
+    if (init_pos==null) {
+      initialCameraPosition =  CameraPosition(
+          target: LatLng(0, -7.9306927),
+          zoom: CAMERA_ZOOM,
+          tilt: CAMERA_TILT,
+          bearing: CAMERA_BEARING);}
+    else{
+    initialCameraPosition =  CameraPosition(
+      target: init_pos,
+      zoom: CAMERA_ZOOM,
+      tilt: CAMERA_TILT,
+      bearing: CAMERA_BEARING);
+    }
+    print(initialCameraPosition);
+
     //this should return different things if recording or not recording
     if (!recording) {
       return Scaffold(
@@ -55,7 +63,16 @@ class _TrackingState extends State<TrackingActivity> {
                 onPressed: () => startRecording(),)
             ]
             ,),
-          body: constmap
+          body: GoogleMap(
+            myLocationButtonEnabled: true,
+            compassEnabled: true,
+            tiltGesturesEnabled: false,
+            markers: _markers,
+            polylines: _polylines,
+            mapType: MapType.normal,
+            initialCameraPosition: initialCameraPosition,
+            onMapCreated: onMapCreated,
+            )
       );
     }
     else {
@@ -67,27 +84,53 @@ class _TrackingState extends State<TrackingActivity> {
                 onPressed: submit(),)
             ]
             ,),
-          body: constmap
+          body:GoogleMap(
+            myLocationButtonEnabled: true,
+            compassEnabled: true,
+            tiltGesturesEnabled: false,
+            markers: _markers,
+            polylines: _polylines,
+            mapType: MapType.normal,
+            initialCameraPosition: initialCameraPosition,
+              onMapCreated: onMapCreated
+            )
       );
     }
   }
 
-  startRecording() {
-    if (!map_ready){return;}
-    recording = true;
+  startRecording() async {
     setState(() {
-
+      recording = true;
     });
-  }
-
-  submit() {}
-
-  Future<void> onMapCreated(GoogleMapController controller) async {
-    //idk man try to get current location to center it?
-    map_ready=true;
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    controller.moveCamera(CameraUpdate.newLatLng(LatLng(position.latitude,position.longitude)));
+    init_pos = LatLng(position.latitude,position.longitude);
+    setState(() {
+      _markers.add(Marker(markerId: MarkerId('Start'),infoWindow: InfoWindow(title: "Start"),position: LatLng(position.latitude,position.longitude)));
+    });
+
+    positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.bestForNavigation).listen(
+        (Position position){
+
+        }
+    );
+  }
+
+  submit() {
+    //TODO: SEND TO FIREBASE, REDIRECT US TO THE INFO PAGE MATCHING WHAT WE'VE SUBMITTED
   }
 
 
+  @override
+  void dispose() {
+    if (positionStream!=null){
+      positionStream.cancel();
+    }
+    super.dispose();
+  }
+
+
+  void onMapCreated(GoogleMapController controller) {
+    if(init_pos!=null){controller.animateCamera(CameraUpdate.newLatLng(init_pos));print("moved to "+init_pos.toString());}
+
+  }
 }
