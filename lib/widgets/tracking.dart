@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:track_keeper/datamodel/course.dart';
 
@@ -35,7 +36,7 @@ class _TrackingState extends State<TrackingActivity> {
       polylines: _polylines,
       mapType: MapType.normal,
       initialCameraPosition: const CameraPosition(
-          target: LatLng(40.66101, -7.90971),
+          target: LatLng(0,0),
           zoom: CAMERA_ZOOM,
           tilt: CAMERA_TILT,
           bearing: CAMERA_BEARING),
@@ -81,9 +82,11 @@ class _TrackingState extends State<TrackingActivity> {
 
   submit() {}
 
-  void onMapCreated(GoogleMapController controller) {
+  Future<void> onMapCreated(GoogleMapController controller) async {
     //idk man try to get current location to center it?
     map_ready=true;
+    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+    controller.moveCamera(CameraUpdate.newLatLng(LatLng(position.latitude,position.longitude)));
   }
 
 
