@@ -26,6 +26,7 @@ class _TrackingState extends State<TrackingActivity> {
   Set<Polyline> _polylines;
   Course course;
   LatLng init_pos;
+  GoogleMapController mapController;
   _TrackingState() {
     _markers = Set();
     _polylines = Set();
@@ -104,6 +105,7 @@ class _TrackingState extends State<TrackingActivity> {
     });
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     init_pos = LatLng(position.latitude,position.longitude);
+    if (mapController!=null) {mapController.animateCamera(CameraUpdate.newLatLng(init_pos));}
     setState(() {
       _markers.add(Marker(markerId: MarkerId('Start'),infoWindow: InfoWindow(title: "Start"),position: LatLng(position.latitude,position.longitude)));
     });
@@ -130,7 +132,7 @@ class _TrackingState extends State<TrackingActivity> {
 
 
   void onMapCreated(GoogleMapController controller) {
-    if(init_pos!=null){controller.animateCamera(CameraUpdate.newLatLng(init_pos));print("moved to "+init_pos.toString());}
+    if(init_pos!=null){controller.animateCamera(CameraUpdate.newLatLng(init_pos));mapController=controller;}
 
   }
 }
