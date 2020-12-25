@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -19,25 +21,57 @@ class Course{
    String name;
    double lat; //querying inner doc range seems like a mess or even impossible
    double lon;
-   Course.fromDocument(docData){this.timestamp=docData['timestamp'];
-                                this.runtime=docData['runtime'];
-                                this.user=docData['user'];
-                                this.uID=docData['uID'];
-                                this.track_length = docData['track_length'];
-                                this.max_speed = docData['max_speed'];
-                                this.avg_speed = docData['avg_speed'];
-                                this.rating = docData['rating'];
-                                this.course_id = docData['course_id'];
-                                this.iscopy = docData['iscopy'];
-                                this.isprivate=docData['isprivate'];
-                                this.anon =docData['anon'];
-                                this.name = docData['name'];
-                                this.lat = docData['lat'];
-                                this.lon= docData['lon'];
-                                //TODO: figure out how to pass pics and nodes into lists
-          }
-   String toJson(){return null;}
+
+
+   Map<String,dynamic> toJson()=>{'timestamp':timestamp,'runtime':runtime,'user':user,'uID':uID,
+                                  'track_length':track_length,'nodes':jsonEncode(nodes),'pictures':jsonEncode(pictures),
+                                  'max_speed':max_speed,'avg_speed':avg_speed,'rating':rating,
+                                    'course_id':course_id,'iscopy':iscopy,'isprivate':isprivate,
+                                  'anon':anon,'name':name,'lat':lat,'lon':lon};
+
+   Course fromJson(){
+     //TODO: figure this one out
+   }
+   appendNode(CourseNode x){
+     if (x.velocity>max_speed){max_speed=x.velocity;}
+     nodes.add(x);
+     track_length+=x.distance_from_last/1000;
+     runtime = nodes.first.time_stamp - nodes.last.time_stamp;
+     avg_speed = track_length/((runtime/1000)/3600);
+   }
+   LatLng centerMapPoint(){return nodes.elementAt((nodes.length/2) as int).toLatLng();}
+   String getFormattedTimestamp(){return "TBA";}
+   String formattedRuntime(){
+     double totsecs = runtime/1000;
+     String ret ="";
+     if (totsecs>3600) {
+       int hours = totsecs/3600 as int;
+       ret+= hours.toString()+":";
+       totsecs-=hours*3600;
+       int mins = totsecs/60 as int;
+       if (mins<10){ret+="0";}
+       ret+=mins.toString()+":";
+       totsecs-=60*mins;
+       int seconds = totsecs as int;
+       if (seconds>10){ret+="0";}
+       ret+=seconds.toString()+" h";
+     } else {
+       int mins = totsecs/60 as int;
+       ret+=mins.toString() +":";
+       totsecs-=60*mins;
+       int seconds = totsecs as int;
+       if (seconds>10){ret+="0";}
+       ret+=seconds.toString()+" min";
+     }
+     return ret;}
+
+   String formattedTrackLength() =>track_length.toStringAsFixed(3)+" km";
+   String formattedMaxSpeed() =>max_speed.toStringAsFixed(3)+ " km/h";
+   String formattedAvgSpeed()=>avg_speed.toStringAsFixed(3)+ " km/h";
 }
+
+
+
 
 class CourseNode {
    double time_stamp; //gonna have to use system.nano timing cuz duration is api 26
@@ -61,6 +95,15 @@ class CourseNode {
      double time_ellapsed_hours = (time_stamp-previous.time_stamp)/1000/3600;
      velocity = distance_from_last/1000/time_ellapsed_hours;
    }
+  CourseNode fromJson(Map<String,dynamic> json){
+     lat = json['lat'] as double;
+     lon = json['lon'] as double;
+     time_stamp = json['time_stamp'] as double;
+     distance_from_last = json['distance_from_last'] as double;
+     velocity = json['velocity'] as double;
+   }
 
   LatLng toLatLng() =>LatLng(lat,lon);
+   Map<String,dynamic> toJson()=> {'lat':lat,'lon':lon,'distance_from_last':distance_from_last,'time_stamp':time_stamp,'velocity':velocity};
+
 }
