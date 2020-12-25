@@ -26,13 +26,15 @@ class _TrackingState extends State<TrackingActivity> {
   Set<Polyline> _polylines;
   Course course;
   LatLng init_pos;
+  List<LatLng> points;
   GoogleMapController mapController;
   _TrackingState() {
     _markers = Set();
     _polylines = Set();
+    points = [];
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((value) {  init_pos= LatLng(value.latitude, value.longitude);setState(() {
 
-    });
+    }); if (mapController!=null){mapController..animateCamera(CameraUpdate.newLatLng(init_pos));}
     });
   }
 
@@ -52,7 +54,7 @@ class _TrackingState extends State<TrackingActivity> {
       tilt: CAMERA_TILT,
       bearing: CAMERA_BEARING);
     }
-    print(initialCameraPosition);
+
 
     //this should return different things if recording or not recording
     if (!recording) {
@@ -105,15 +107,23 @@ class _TrackingState extends State<TrackingActivity> {
     });
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     init_pos = LatLng(position.latitude,position.longitude);
+    points.add( init_pos);
     if (mapController!=null) {mapController.animateCamera(CameraUpdate.newLatLng(init_pos));}
     setState(() {
-      _markers.add(Marker(markerId: MarkerId('Start'),infoWindow: InfoWindow(title: "Start"),position: LatLng(position.latitude,position.longitude)));
+      _markers.add(Marker(markerId: MarkerId('Start'),infoWindow: InfoWindow(title: "Start"),position: init_pos));
     });
 
     positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.bestForNavigation).listen(
         (Position position){
-
+        init_pos = LatLng(position.latitude, position.longitude);
+        points.add(init_pos);
+        _polylines.add(Polyline(polylineId: PolylineId('our track'),visible: true,points: points,color: Colors.red));
+        setState(() {
+        });
+        mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
+        _markers.add(Marker(markerId: MarkerId('Current'),infoWindow: InfoWindow(title: "Current"),position: init_pos));
         }
+
     );
   }
 
