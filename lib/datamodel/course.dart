@@ -68,6 +68,19 @@ class Course{
    String formattedTrackLength() =>track_length.toStringAsFixed(3)+" km";
    String formattedMaxSpeed() =>max_speed.toStringAsFixed(3)+ " km/h";
    String formattedAvgSpeed()=>avg_speed.toStringAsFixed(3)+ " km/h";
+
+
+   void finalize(){
+     //calculate rating and avg_speed here, probably also duration based on nodes*time between node adds
+     if (nodes.isEmpty){return;}
+     runtime = nodes.first.time_stamp - nodes.last.time_stamp;
+     lat = nodes.first.lat;
+     lon = nodes.first.lon;
+     timestamp =  DateTime.now().millisecondsSinceEpoch;
+     avg_speed = track_length/((runtime/1000)/3600);
+     if (! iscopy)course_id+=timestamp.toString();
+     rating = ((avg_speed/6)*((runtime/1e+9)/30)) as int; // avg human walking speed is 6km/h
+   }
 }
 
 

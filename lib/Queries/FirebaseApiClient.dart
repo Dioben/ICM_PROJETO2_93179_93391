@@ -66,9 +66,39 @@ class FirebaseApiClient{
         if (element['lat']>latmin && element['lat']<latmax && element['lon']<longmin && element['lon']<longmax) yield Course.fromJson(data);
       });
 
+    
+  }
+  Stream<Course> getNearbyTopRated(LatLng coords, int limit) async*{
+    double r = 100.0/6371.0; //100 km over earth radius
+    double latmin = degrees(radians(coords.latitude)-r);
+    double latmax = degrees(radians(coords.latitude)+r);
+
+    double deltaLon = degrees(asin(sin(r)/cos(radians(coords.longitude))));
+    double longmin = coords.longitude-deltaLon;
+    double longmax = coords.longitude+deltaLon;
+
+    QuerySnapshot result = await mainCollection.orderBy("rating",descending: true).limit(limit*20).get();
+    result.docs.forEach((element) async* {
+      Map<String,dynamic> data = element.data();
+      if (element['lat']>latmin && element['lat']<latmax && element['lon']<longmin && element['lon']<longmax) yield Course.fromJson(data);
+    });
 
 
+  }
+  Stream<Course> getMyCourses() async*{
+    QuerySnapshot result = await userCourses.orderBy("timestamp", descending: true).get();
+    result.docs.forEach((element) async*{ yield Course.fromJson(element.data());});
+  }
 
+  Stream<Course> getMyCoursesByRating() async*{
+    QuerySnapshot result = await userCourses.orderBy("rating", descending: true).get();
+    result.docs.forEach((element) async*{ yield Course.fromJson(element.data());});
+  }
+  Stream<Course> getOtherRuns(Course course) async*{
+    String uid = course.uID;
+    int ts = course.timestamp;
+    QuerySnapshot result = await userCourses.where('course_id',isEqualTo: uid).orderBy("rating", descending: true).get();
+    result.docs.forEach((element) async*{Map<String,dynamic> data = element.data(); if (data['ts']!=ts || data['uID']!=uid){yield Course.fromJson(data);}});
   }
 
 }
