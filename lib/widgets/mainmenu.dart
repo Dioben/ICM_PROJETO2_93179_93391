@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:track_keeper/widgets/login.dart';
@@ -9,7 +10,6 @@ import 'package:track_keeper/widgets/user-info.dart';
 class MainMenu extends StatelessWidget{
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
 
       body:Padding(//maybe replace with column/expanded
@@ -63,7 +63,8 @@ class MainMenu extends StatelessWidget{
   viewSettings(context){
     Navigator.push(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
   }
-  toLogin(context){
+  toLogin(context) async {
+    await FirebaseAuth.instance.signOut();
     Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginMenu()));
   }
 }
