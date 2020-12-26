@@ -29,7 +29,7 @@ class Course{
                                     'course_id':course_id,'iscopy':iscopy,'isprivate':isprivate,
                                   'anon':anon,'name':name,'lat':lat,'lon':lon};
 
-   Course fromJson(){
+   Course.fromJson(Map<String,dynamic> json){
      //TODO: figure this one out
    }
    appendNode(CourseNode x){
@@ -80,22 +80,22 @@ class CourseNode {
    double lat; //saving location to firebase is tricky so we're using this instead
    double lon;
 
-   CourseNode Initial(Position initial){
+   CourseNode.initial(Position initial){
     lat = initial.latitude;
     lon = initial.longitude;
     time_stamp = DateTime.now().millisecondsSinceEpoch as double;
     velocity=0;
     distance_from_last=0;
    }
-   CourseNode FollowUp(Position initial,CourseNode previous){
+   CourseNode.followUp(Position initial,CourseNode previous){
      lat = initial.latitude;
      lon = initial.longitude;
      distance_from_last = Geolocator.distanceBetween(previous.lat, previous.lon, lat, lon);
      time_stamp = DateTime.now().millisecondsSinceEpoch as double;
-     double time_ellapsed_hours = (time_stamp-previous.time_stamp)/1000/3600;
-     velocity = distance_from_last/1000/time_ellapsed_hours;
+     double timeEllapsedHours = (time_stamp-previous.time_stamp)/1000/3600;
+     velocity = distance_from_last/1000/timeEllapsedHours;
    }
-  CourseNode fromJson(Map<String,dynamic> json){
+  CourseNode.fromJson(Map<String,dynamic> json){
      lat = json['lat'] as double;
      lon = json['lon'] as double;
      time_stamp = json['time_stamp'] as double;
