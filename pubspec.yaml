@@ -27,6 +27,7 @@ dependencies:
   firebase_core: "0.5.3"
   flutter_polyline_points: ^0.1.0
   geolocator: ^6.1.13
+  firebase_auth: "^0.18.4"
 
 dev_dependencies:
   flutter_test:

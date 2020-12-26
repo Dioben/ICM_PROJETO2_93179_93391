@@ -1,6 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:track_keeper/widgets/login.dart';
+import 'package:track_keeper/widgets/mainmenu.dart';
 import 'package:track_keeper/widgets/start-load.dart';
 
 void main() {
@@ -35,7 +37,10 @@ class StartFuture extends StatelessWidget {
         future:_initialization,
         builder: (context,snapshot){
          if (snapshot.hasError) {return Text("Failed to connect to firebase");}
-         if (snapshot.connectionState==ConnectionState.done){return LoginMenu();}
+         if (snapshot.connectionState==ConnectionState.done){
+                FirebaseAuth auth = FirebaseAuth.instance;
+                if (auth.currentUser==null) return LoginMenu();
+                  return MainMenu();}
          return StartLoad();
         });
   }
