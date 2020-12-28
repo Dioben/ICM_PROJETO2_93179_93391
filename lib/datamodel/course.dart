@@ -1,5 +1,7 @@
 import 'dart:convert';
+import 'dart:math';
 
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 
@@ -30,7 +32,52 @@ class Course{
                                   'anon':anon,'name':name,'lat':lat,'lon':lon};
 
    Course.fromJson(Map<String,dynamic> json){
-     //TODO: figure this one out
+     timestamp = json['timestamp'] as int;
+     runtime = json['runtime'] as double;
+     user = json['user'];
+     uID = json['uID'];
+     track_length = json['track_length'] as double;
+     max_speed = json['max_speed'] as double;
+     avg_speed = json['avg_speed'] as double;
+     rating = json['rating'] as int;
+     course_id = json['course_id'];
+     name = json['name'];
+     iscopy = json['iscopy'] as bool;
+     isprivate = json['isprivate'] as bool;
+     anon = json['anon'] as bool;
+     lat = json['lat'] as double;
+     lon = json['lon'] as double;
+     pictures = [];
+     for (dynamic e in json['pictures']){pictures.add(e as String);}
+     nodes = [];
+     for(dynamic e in json['nodes']){nodes.add(CourseNode.fromJson(e));}
+   }
+
+   Course.copy(Course course){
+
+     iscopy = true;
+     pictures=[];
+     nodes=[];
+     this.course_id = course.course_id;
+     this.user = FirebaseAuth.instance.currentUser.displayName;
+     this.uID = FirebaseAuth.instance.currentUser.uid;
+     max_speed=0;
+     avg_speed=0;
+     anon=false;
+     isprivate=false;
+   }
+   Course.original(){
+     iscopy=false;
+     pictures=[];
+     nodes=[];
+     this.user = FirebaseAuth.instance.currentUser.displayName;
+     this.course_id = FirebaseAuth.instance.currentUser.uid;
+     this.uID = FirebaseAuth.instance.currentUser.uid;
+     name = "";
+     max_speed=0;
+     avg_speed=0;
+     anon=false;
+     isprivate=false;
    }
    appendNode(CourseNode x){
      if (x.velocity>max_speed){max_speed=x.velocity;}
@@ -40,7 +87,10 @@ class Course{
      avg_speed = track_length/((runtime/1000)/3600);
    }
    LatLng centerMapPoint(){return nodes.elementAt((nodes.length/2) as int).toLatLng();}
-   String getFormattedTimestamp(){return "TBA";}
+   String getFormattedTimestamp(){
+     //todo: figure out the smart stuff to make it look nice
+     Duration timepast =DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(timestamp));
+     return timepast.toString();}
    String formattedRuntime(){
      double totsecs = runtime/1000;
      String ret ="";
@@ -69,6 +119,7 @@ class Course{
    String formattedMaxSpeed() =>max_speed.toStringAsFixed(3)+ " km/h";
    String formattedAvgSpeed()=>avg_speed.toStringAsFixed(3)+ " km/h";
 
+   String toString() => this.toJson().toString();
 
    void finalize(){
      //calculate rating and avg_speed here, probably also duration based on nodes*time between node adds
@@ -115,7 +166,7 @@ class CourseNode {
      distance_from_last = json['distance_from_last'] as double;
      velocity = json['velocity'] as double;
    }
-
+  String toString()=>this.toJson().toString();
   LatLng toLatLng() =>LatLng(lat,lon);
    Map<String,dynamic> toJson()=> {'lat':lat,'lon':lon,'distance_from_last':distance_from_last,'time_stamp':time_stamp,'velocity':velocity};
 

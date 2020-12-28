@@ -16,7 +16,7 @@ class FirebaseApiClient{
   static final FirebaseApiClient instance = FirebaseApiClient._construct();
 
   factory FirebaseApiClient.getInstance(){return instance;}
-  static FirebaseApiClient _construct() {
+  FirebaseApiClient._construct() {
     FirebaseFirestore db = FirebaseFirestore.instance;
     mainCollection = db.collection("courses");
     imagefolder = FirebaseStorage.instance.ref("images");
@@ -59,12 +59,15 @@ class FirebaseApiClient{
     double deltaLon = degrees(asin(sin(r)/cos(radians(coords.longitude))));
     double longmin = coords.longitude-deltaLon;
     double longmax = coords.longitude+deltaLon;
-
+    print("latmin = " +latmin.toString()+" latmax = "+latmax.toString()+" lonmin = "+longmin.toString()+ " lonmax = "+longmax.toString());
     QuerySnapshot result = await mainCollection.orderBy("timestamp",descending: true).limit(limit*20).get();
-    result.docs.forEach((element) async* {
-        Map<String,dynamic> data = element.data();
-        if (element['lat']>latmin && element['lat']<latmax && element['lon']<longmin && element['lon']<longmax) yield Course.fromJson(data);
-      });
+    Iterator it = result.docs.iterator;
+    while (it.moveNext()){
+      DocumentSnapshot element = it.current;
+      Map<String,dynamic> data = element.data();
+      if (element['lat']>latmin && element['lat']<latmax && element['lon']>longmin && element['lon']<longmax){ yield Course.fromJson(data);}
+    }
+
 
     
   }
@@ -78,27 +81,45 @@ class FirebaseApiClient{
     double longmax = coords.longitude+deltaLon;
 
     QuerySnapshot result = await mainCollection.orderBy("rating",descending: true).limit(limit*20).get();
-    result.docs.forEach((element) async* {
+    Iterator it = result.docs.iterator;
+    while (it.moveNext()){
+      DocumentSnapshot element = it.current;
       Map<String,dynamic> data = element.data();
-      if (element['lat']>latmin && element['lat']<latmax && element['lon']<longmin && element['lon']<longmax) yield Course.fromJson(data);
-    });
-
-
+      if (element['lat']>latmin && element['lat']<latmax && element['lon']>longmin && element['lon']<longmax){ yield Course.fromJson(data);}
+    }
   }
+
   Stream<Course> getMyCourses() async*{
     QuerySnapshot result = await userCourses.orderBy("timestamp", descending: true).get();
-    result.docs.forEach((element) async*{ yield Course.fromJson(element.data());});
+    Iterator it = result.docs.iterator;
+    while (it.moveNext()){
+      DocumentSnapshot element = it.current;
+      Map<String,dynamic> data = element.data();
+      yield Course.fromJson(data);
+    }
   }
 
   Stream<Course> getMyCoursesByRating() async*{
     QuerySnapshot result = await userCourses.orderBy("rating", descending: true).get();
-    result.docs.forEach((element) async*{ yield Course.fromJson(element.data());});
+
+    Iterator it = result.docs.iterator;
+    while (it.moveNext()){
+      DocumentSnapshot element = it.current;
+      Map<String,dynamic> data = element.data();
+      yield Course.fromJson(data);
+    }
   }
   Stream<Course> getOtherRuns(Course course) async*{
     String uid = course.uID;
     int ts = course.timestamp;
     QuerySnapshot result = await userCourses.where('course_id',isEqualTo: uid).orderBy("rating", descending: true).get();
-    result.docs.forEach((element) async*{Map<String,dynamic> data = element.data(); if (data['ts']!=ts || data['uID']!=uid){yield Course.fromJson(data);}});
+    Iterator it = result.docs.iterator;
+    while (it.moveNext()){
+      DocumentSnapshot element = it.current;
+      Map<String,dynamic> data = element.data();
+      if (data['ts']!=ts || data['uID']!=uid){yield Course.fromJson(data);}
+    }
+
   }
 
 }

@@ -1,6 +1,11 @@
+import 'dart:developer';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:track_keeper/Queries/FirebaseApiClient.dart';
+import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/login.dart';
 import 'package:track_keeper/widgets/settings.dart';
 import 'package:track_keeper/widgets/track-list.dart';
@@ -60,8 +65,10 @@ class MainMenu extends StatelessWidget{
   viewTracks(context){
     Navigator.push(context,MaterialPageRoute(builder: (context) => ViewTrackList()));
   }
-  viewSettings(context){
-    Navigator.push(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
+  viewSettings(context) async{
+    //Navigator.push(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
+    Stream<Course> courses = FirebaseApiClient.instance.getNearbyRecent(LatLng(40.6405, -8.6538), 30);
+    await for (Course val in courses){print(val.getFormattedTimestamp());}
   }
   toLogin(context) async {
     await FirebaseAuth.instance.signOut();
