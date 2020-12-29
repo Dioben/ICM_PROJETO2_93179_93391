@@ -59,7 +59,6 @@ class FirebaseApiClient{
     double deltaLon = degrees(asin(sin(r)/cos(radians(coords.longitude))));
     double longmin = coords.longitude-deltaLon;
     double longmax = coords.longitude+deltaLon;
-    print("latmin = " +latmin.toString()+" latmax = "+latmax.toString()+" lonmin = "+longmin.toString()+ " lonmax = "+longmax.toString());
     QuerySnapshot result = await mainCollection.orderBy("timestamp",descending: true).limit(limit*20).get();
     Iterator it = result.docs.iterator;
     while (it.moveNext()){
