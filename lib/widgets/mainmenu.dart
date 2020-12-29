@@ -8,6 +8,7 @@ import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/login.dart';
 import 'package:track_keeper/widgets/settings.dart';
+import 'package:track_keeper/widgets/track-info.dart';
 import 'package:track_keeper/widgets/track-list.dart';
 import 'package:track_keeper/widgets/tracking.dart';
 import 'package:track_keeper/widgets/user-info.dart';
@@ -72,6 +73,6 @@ class MainMenu extends StatelessWidget{
   }
   toLogin(context) async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginMenu()));
+    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => TrackInfoActivity()));
   }
 }

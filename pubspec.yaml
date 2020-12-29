@@ -31,6 +31,8 @@ dependencies:
   firebase_storage: ^5:2:0
   cloud_firestore: "^0.14.4"
   vector_math: any
+  sensors: '>=0.4.0  <2.0.0'
+  image_picker:
 dev_dependencies:
   flutter_test:
     sdk: flutter

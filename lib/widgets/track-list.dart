@@ -30,7 +30,7 @@ class ViewListState extends State<ViewTrackList>{
 
   }
 
-  goToInfo() { Navigator.push(context,MaterialPageRoute(builder: (context) => TrackInfoActivity()));}
+  goToInfo() { Navigator.push(context,MaterialPageRoute(builder: (context) => TrackInfoActivity(course: null,)));}
 }
 
 class TrackTypeSelector extends StatefulWidget{

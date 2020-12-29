@@ -4,7 +4,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:sensors/sensors.dart';
+import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
+import 'package:track_keeper/widgets/track-info.dart';
 
 
 
@@ -28,6 +31,10 @@ class _TrackingState extends State<TrackingActivity> {
   LatLng init_pos;
   List<LatLng> points;
   GoogleMapController mapController;
+  StreamSubscription<AccelerometerEvent> accelStream;
+  double velocity=0;
+  double xaxis=0; //we disregard z axis because it includes gravity and doesnt matter for the most part
+  double yaxis=0;
   _TrackingState() {
     _markers = Set();
     _polylines = Set();
@@ -96,12 +103,14 @@ class _TrackingState extends State<TrackingActivity> {
             mapType: MapType.normal,
             initialCameraPosition: initialCameraPosition,
               onMapCreated: onMapCreated
-            )
+            ),
+      floatingActionButton: FloatingActionButton(child: Icon(Icons.camera_alt),onPressed: (){takePicture();},),
       );
     }
   }
 
   startRecording() async {
+    course = Course.original();
     setState(() {
       recording = true;
     });
@@ -115,7 +124,9 @@ class _TrackingState extends State<TrackingActivity> {
 
     positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.bestForNavigation).listen(
         (Position position){
+          velocity=position.speed;
         init_pos = LatLng(position.latitude, position.longitude);
+        course.appendNode(CourseNode.followUp(position, course.nodes.last));
         points.add(init_pos);
         _polylines.add(Polyline(polylineId: PolylineId('our track'),visible: true,points: points,color: Colors.red));
         setState(() {
@@ -125,10 +136,19 @@ class _TrackingState extends State<TrackingActivity> {
         }
 
     );
+    accelStream = accelerometerEvents.listen((event) {
+      //what the hell do i do with this
+    });
   }
 
-  submit() {
+  submit() async{
     //TODO: SEND TO FIREBASE, REDIRECT US TO THE INFO PAGE MATCHING WHAT WE'VE SUBMITTED
+    positionStream.cancel();
+    accelStream.cancel();
+    course.finalize();
+   await FirebaseApiClient.instance.submitCourse(course);
+   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TrackInfoActivity(course: course)));
+
   }
 
 
@@ -137,6 +157,7 @@ class _TrackingState extends State<TrackingActivity> {
     if (positionStream!=null){
       positionStream.cancel();
     }
+    if (accelStream!=null){accelStream.cancel();}
     super.dispose();
   }
 
@@ -145,4 +166,6 @@ class _TrackingState extends State<TrackingActivity> {
     if(init_pos!=null){controller.animateCamera(CameraUpdate.newLatLng(init_pos));mapController=controller;}
 
   }
+
+  void takePicture() {}
 }
