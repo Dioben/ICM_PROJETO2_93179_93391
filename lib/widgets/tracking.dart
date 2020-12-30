@@ -1,9 +1,11 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:sensors/sensors.dart';
 import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
@@ -35,6 +37,7 @@ class _TrackingState extends State<TrackingActivity> {
   double velocity=0;
   double xaxis=0; //we disregard z axis because it includes gravity and doesnt matter for the most part
   double yaxis=0;
+  final ImagePicker picker = ImagePicker();
   _TrackingState() {
     _markers = Set();
     _polylines = Set();
@@ -91,7 +94,7 @@ class _TrackingState extends State<TrackingActivity> {
             actions: [
               IconButton(icon: const Icon(Icons.stop),
                 tooltip: "Submit",
-                onPressed: submit(),)
+                onPressed: submit,)
             ]
             ,),
           body:GoogleMap(
@@ -110,7 +113,7 @@ class _TrackingState extends State<TrackingActivity> {
   }
 
   startRecording() async {
-    course = Course.original();
+    //course = Course.original();
     setState(() {
       recording = true;
     });
@@ -126,18 +129,19 @@ class _TrackingState extends State<TrackingActivity> {
         (Position position){
           velocity=position.speed;
         init_pos = LatLng(position.latitude, position.longitude);
-        course.appendNode(CourseNode.followUp(position, course.nodes.last));
+       // course.appendNode(CourseNode.followUp(position, course.nodes.last));
         points.add(init_pos);
         _polylines.add(Polyline(polylineId: PolylineId('our track'),visible: true,points: points,color: Colors.red));
         setState(() {
         });
+        print(mapController);
         mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
         _markers.add(Marker(markerId: MarkerId('Current'),infoWindow: InfoWindow(title: "Current"),position: init_pos));
         }
 
     );
     accelStream = accelerometerEvents.listen((event) {
-      //what the hell do i do with this
+      //TODO: what the hell do i do with this
     });
   }
 
@@ -163,9 +167,14 @@ class _TrackingState extends State<TrackingActivity> {
 
 
   void onMapCreated(GoogleMapController controller) {
-    if(init_pos!=null){controller.animateCamera(CameraUpdate.newLatLng(init_pos));mapController=controller;}
+    if(init_pos!=null){controller.animateCamera(CameraUpdate.newLatLng(init_pos));mapController=controller;print("controller assigned");}
 
   }
 
-  void takePicture() {}
+  void takePicture() async{
+    PickedFile picture = await picker.getImage(source: ImageSource.camera);
+    File picfile = File(picture.path);
+    String upstreamurl = await FirebaseApiClient.instance.postImage(picfile);
+    if (upstreamurl!=null){print("got url $upstreamurl");/*course.pictures.add(upstreamurl);*/}
+  }
 }

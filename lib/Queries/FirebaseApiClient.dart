@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -22,9 +23,16 @@ class FirebaseApiClient{
     imagefolder = FirebaseStorage.instance.ref("images");
   }
 
-  Future<bool>  postImage() async{
-  //image stuff here, unsure how filepath and stuff is gonna work so putting a stub only
-    //return true if success, false otherwise
+  Future<String>  postImage(File image) async{
+    Reference thispic = imagefolder.child("xd-now.png");
+    try {
+      await thispic.putFile(image);
+      String url = await thispic.getDownloadURL();
+      return url;
+    }on FirebaseException catch (e) {
+    return null;
+    }
+
   }
 
   void setUser(User user) async{
