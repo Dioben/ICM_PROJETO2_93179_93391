@@ -73,6 +73,6 @@ class MainMenu extends StatelessWidget{
   }
   toLogin(context) async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => TrackInfoActivity()));
+    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginMenu()));
   }
 }

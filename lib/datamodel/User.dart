@@ -1,3 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
+
 class AppUser {
    String username;
    String uid;
@@ -9,7 +11,7 @@ class AppUser {
    int coursecount;
 
 
-   AppUser(){}
+   AppUser(User user){username = user.displayName;uid=user.uid;avg_speed=0;max_speed=0;top_rating=0;total_runtime=0;total_tracklength=0;coursecount=0;}
    AppUser.fromJson(Map <String,dynamic> json){
      this.username = json['username'];
      this.uid = json['uid'];
@@ -30,22 +32,22 @@ class AppUser {
      double totsecs = total_runtime/1000;
      String ret ="";
      if (totsecs>3600) {
-       int hours = totsecs/3600 as int;
+       int hours = totsecs~/3600;
        ret+= hours.toString()+":";
        totsecs-=hours*3600;
-       int mins = totsecs/60 as int;
+       int mins = totsecs~/60;
        if (mins<10){ret+="0";}
        ret+=mins.toString()+":";
        totsecs-=60*mins;
-       int seconds = totsecs as int;
-       if (seconds>10){ret+="0";}
+       int seconds = totsecs.toInt();
+       if (seconds<10){ret+="0";}
        ret+=seconds.toString()+" h";
      } else {
-       int mins = totsecs/60 as int;
+       int mins = totsecs~/60;
        ret+=mins.toString() +":";
        totsecs-=60*mins;
-       int seconds = totsecs as int;
-       if (seconds>10){ret+="0";}
+       int seconds = totsecs.toInt();
+       if (seconds<10){ret+="0";}
        ret+=seconds.toString()+" min";
      }
      return ret;}

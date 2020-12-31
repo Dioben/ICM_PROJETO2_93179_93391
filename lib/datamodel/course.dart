@@ -95,22 +95,22 @@ class Course{
      double totsecs = runtime/1000;
      String ret ="";
      if (totsecs>3600) {
-       int hours = totsecs/3600 as int;
+       int hours = totsecs~/3600;
        ret+= hours.toString()+":";
        totsecs-=hours*3600;
-       int mins = totsecs/60 as int;
+       int mins = totsecs~/60;
        if (mins<10){ret+="0";}
        ret+=mins.toString()+":";
        totsecs-=60*mins;
-       int seconds = totsecs as int;
-       if (seconds>10){ret+="0";}
+       int seconds = totsecs.toInt();
+       if (seconds<10){ret+="0";}
        ret+=seconds.toString()+" h";
      } else {
-       int mins = totsecs/60 as int;
+       int mins = totsecs~/60;
        ret+=mins.toString() +":";
        totsecs-=60*mins;
-       int seconds = totsecs as int;
-       if (seconds>10){ret+="0";}
+       int seconds = totsecs.toInt();
+       if (seconds<10){ret+="0";}
        ret+=seconds.toString()+" min";
      }
      return ret;}

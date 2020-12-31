@@ -37,6 +37,7 @@ class _TrackingState extends State<TrackingActivity> {
   double velocity=0;
   double xaxis=0; //we disregard z axis because it includes gravity and doesnt matter for the most part
   double yaxis=0;
+  bool submitted = false;
   final ImagePicker picker = ImagePicker();
   _TrackingState() {
     _markers = Set();
@@ -113,7 +114,8 @@ class _TrackingState extends State<TrackingActivity> {
   }
 
   startRecording() async {
-    //course = Course.original();
+    if (mapController==null){return;}
+    course = Course.original();
     setState(() {
       recording = true;
     });
@@ -129,7 +131,7 @@ class _TrackingState extends State<TrackingActivity> {
         (Position position){
           velocity=position.speed;
         init_pos = LatLng(position.latitude, position.longitude);
-       // course.appendNode(CourseNode.followUp(position, course.nodes.last));
+        course.appendNode(CourseNode.followUp(position, course.nodes.last));
         points.add(init_pos);
         _polylines.add(Polyline(polylineId: PolylineId('our track'),visible: true,points: points,color: Colors.red));
         setState(() {
@@ -146,7 +148,9 @@ class _TrackingState extends State<TrackingActivity> {
   }
 
   submit() async{
-    //TODO: SEND TO FIREBASE, REDIRECT US TO THE INFO PAGE MATCHING WHAT WE'VE SUBMITTED
+    //cancel all streams,submit course,view it
+    if (submitted) return;
+    submitted=true;
     positionStream.cancel();
     accelStream.cancel();
     course.finalize();
@@ -175,6 +179,6 @@ class _TrackingState extends State<TrackingActivity> {
     PickedFile picture = await picker.getImage(source: ImageSource.camera);
     File picfile = File(picture.path);
     String upstreamurl = await FirebaseApiClient.instance.postImage(picfile);
-    if (upstreamurl!=null){print("got url $upstreamurl");/*course.pictures.add(upstreamurl);*/}
+    if (upstreamurl!=null){print("got url $upstreamurl");course.pictures.add(upstreamurl);}
   }
 }

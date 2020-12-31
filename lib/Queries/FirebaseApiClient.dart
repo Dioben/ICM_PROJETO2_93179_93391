@@ -42,7 +42,7 @@ class FirebaseApiClient{
                           if (value.exists){
                                   FirebaseApiClient.user = AppUser.fromJson(value.data());
                           }else{
-                            FirebaseApiClient.user = AppUser();
+                            FirebaseApiClient.user = AppUser(user);
                           }
     });
   }
