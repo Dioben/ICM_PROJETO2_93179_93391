@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/widgets/login.dart';
 import 'package:track_keeper/widgets/mainmenu.dart';
 import 'package:track_keeper/widgets/start-load.dart';
@@ -40,6 +41,7 @@ class StartFuture extends StatelessWidget {
          if (snapshot.connectionState==ConnectionState.done){
                 FirebaseAuth auth = FirebaseAuth.instance;
                 if (auth.currentUser==null) return LoginMenu();
+                FirebaseApiClient.instance.setUser(auth.currentUser);
                   return MainMenu();}
          return StartLoad();
         });
