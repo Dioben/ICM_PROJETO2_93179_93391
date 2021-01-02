@@ -38,14 +38,15 @@ class _TrackingState extends State<TrackingActivity> {
   double xaxis=0; //we disregard z axis because it includes gravity and doesnt matter for the most part
   double yaxis=0;
   bool submitted = false;
+  bool picturemode=false;
   final ImagePicker picker = ImagePicker();
   _TrackingState() {
     _markers = Set();
     _polylines = Set();
     points = [];
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((value) {  init_pos= LatLng(value.latitude, value.longitude);setState(() {
-
-    }); if (mapController!=null){mapController..animateCamera(CameraUpdate.newLatLng(init_pos));}
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((value) {
+                                          init_pos= LatLng(value.latitude, value.longitude);setState(() {});
+                                          if (mapController!=null){mapController..animateCamera(CameraUpdate.newLatLng(init_pos));}
     });
   }
 
@@ -114,7 +115,7 @@ class _TrackingState extends State<TrackingActivity> {
   }
 
   startRecording() async {
-    if (mapController==null){return;}
+    //if (mapController==null){return;}
     course = Course.original();
     setState(() {
       recording = true;
@@ -122,6 +123,7 @@ class _TrackingState extends State<TrackingActivity> {
     Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
     init_pos = LatLng(position.latitude,position.longitude);
     points.add( init_pos);
+    course.appendNode(CourseNode.initial(position));
     if (mapController!=null) {mapController.animateCamera(CameraUpdate.newLatLng(init_pos));}
     setState(() {
       _markers.add(Marker(markerId: MarkerId('Start'),infoWindow: InfoWindow(title: "Start"),position: init_pos));
@@ -134,11 +136,10 @@ class _TrackingState extends State<TrackingActivity> {
         course.appendNode(CourseNode.followUp(position, course.nodes.last));
         points.add(init_pos);
         _polylines.add(Polyline(polylineId: PolylineId('our track'),visible: true,points: points,color: Colors.red));
-        setState(() {
-        });
-        print(mapController);
-        mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
         _markers.add(Marker(markerId: MarkerId('Current'),infoWindow: InfoWindow(title: "Current"),position: init_pos));
+        if (!picturemode){setState(() {});
+        if (mapController!=null)mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
+        }
         }
 
     );
@@ -154,6 +155,7 @@ class _TrackingState extends State<TrackingActivity> {
     positionStream.cancel();
     accelStream.cancel();
     course.finalize();
+    course.name = 'da debug';
    await FirebaseApiClient.instance.submitCourse(course);
    Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TrackInfoActivity(course: course)));
 
@@ -176,9 +178,17 @@ class _TrackingState extends State<TrackingActivity> {
   }
 
   void takePicture() async{
-    PickedFile picture = await picker.getImage(source: ImageSource.camera);
-    File picfile = File(picture.path);
-    String upstreamurl = await FirebaseApiClient.instance.postImage(picfile);
-    if (upstreamurl!=null){print("got url $upstreamurl");course.pictures.add(upstreamurl);}
-  }
+    try {
+      picturemode=true;
+      final PickedFile picture = await picker.getImage(source: ImageSource.camera);
+      File picfile = File(picture.path);
+      print("got to path");
+      picturemode=false;
+      String upstreamurl = await FirebaseApiClient.instance.postImage(picfile);
+      if (upstreamurl != null) {
+        print("got url $upstreamurl");
+        course.pictures.add(upstreamurl);
+      }
+    }catch(e){print(e);}
+    }
 }

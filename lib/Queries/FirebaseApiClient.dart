@@ -24,7 +24,8 @@ class FirebaseApiClient{
   }
 
   Future<String>  postImage(File image) async{
-    Reference thispic = imagefolder.child("xd-now.png");
+    String name = user.uid+DateTime.now().toString()+".png";
+    Reference thispic = imagefolder.child(name);
     try {
       await thispic.putFile(image);
       String url = await thispic.getDownloadURL();

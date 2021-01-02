@@ -25,11 +25,16 @@ class Course{
    double lon;
 
 
-   Map<String,dynamic> toJson()=>{'timestamp':timestamp,'runtime':runtime,'user':user,'uID':uID,
-                                  'track_length':track_length,'nodes':jsonEncode(nodes),'pictures':jsonEncode(pictures),
+   Map<String,dynamic> toJson(){
+
+     List nodelist = [];
+     for (CourseNode node in nodes){nodelist.add(node.toJson());}
+     
+     return {'timestamp':timestamp,'runtime':runtime,'user':user,'uID':uID,
+                                  'track_length':track_length,'nodes':nodelist,'pictures':pictures,
                                   'max_speed':max_speed,'avg_speed':avg_speed,'rating':rating,
                                     'course_id':course_id,'iscopy':iscopy,'isprivate':isprivate,
-                                  'anon':anon,'name':name,'lat':lat,'lon':lon};
+                                  'anon':anon,'name':name,'lat':lat,'lon':lon};}
 
    Course.fromJson(Map<String,dynamic> json){
      timestamp = json['timestamp'] as int;
@@ -65,6 +70,8 @@ class Course{
      avg_speed=0;
      anon=false;
      isprivate=false;
+     track_length=0;
+     runtime=0;
    }
    Course.original(){
      iscopy=false;
@@ -78,12 +85,14 @@ class Course{
      avg_speed=0;
      anon=false;
      isprivate=false;
+     track_length=0;
+     runtime=0;
    }
    appendNode(CourseNode x){
      if (x.velocity>max_speed){max_speed=x.velocity;}
      nodes.add(x);
      track_length+=x.distance_from_last/1000;
-     runtime = nodes.first.time_stamp - nodes.last.time_stamp;
+     runtime = nodes.last.time_stamp - nodes.first.time_stamp;
      avg_speed = track_length/((runtime/1000)/3600);
    }
    LatLng centerMapPoint(){return nodes.elementAt((nodes.length/2) as int).toLatLng();}
@@ -124,13 +133,13 @@ class Course{
    void finalize(){
      //calculate rating and avg_speed here, probably also duration based on nodes*time between node adds
      if (nodes.isEmpty){return;}
-     runtime = nodes.first.time_stamp - nodes.last.time_stamp;
+     runtime = nodes.last.time_stamp - nodes.first.time_stamp;
      lat = nodes.first.lat;
      lon = nodes.first.lon;
      timestamp =  DateTime.now().millisecondsSinceEpoch;
      avg_speed = track_length/((runtime/1000)/3600);
      if (! iscopy)course_id+=timestamp.toString();
-     rating = ((avg_speed/6)*((runtime/1e+9)/30)) as int; // avg human walking speed is 6km/h
+     rating = (((avg_speed/6)*((runtime/1e+9)/30))).toInt() ; // avg human walking speed is 6km/h
    }
 }
 
@@ -147,7 +156,7 @@ class CourseNode {
    CourseNode.initial(Position initial){
     lat = initial.latitude;
     lon = initial.longitude;
-    time_stamp = DateTime.now().millisecondsSinceEpoch as double;
+    time_stamp = DateTime.now().millisecondsSinceEpoch/1.0;
     velocity=0;
     distance_from_last=0;
    }
@@ -155,7 +164,7 @@ class CourseNode {
      lat = initial.latitude;
      lon = initial.longitude;
      distance_from_last = Geolocator.distanceBetween(previous.lat, previous.lon, lat, lon);
-     time_stamp = DateTime.now().millisecondsSinceEpoch as double;
+     time_stamp = DateTime.now().millisecondsSinceEpoch/1.0;
      double timeEllapsedHours = (time_stamp-previous.time_stamp)/1000/3600;
      velocity = distance_from_last/1000/timeEllapsedHours;
    }
