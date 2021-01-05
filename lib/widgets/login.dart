@@ -67,7 +67,7 @@ class LoginState extends State<LoginMenu>{
           email: namecontrol.text,
           password: passcontrol.text
       );
-      FirebaseApiClient.instance.setUser(userCredential.user);
+      await FirebaseApiClient.instance.setUser(userCredential.user);
       Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MainMenu()));
     } on FirebaseAuthException catch (e) {
       if (e.code == 'user-not-found') {
