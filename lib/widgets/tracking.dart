@@ -419,7 +419,7 @@ class _TrackingState extends State<TrackingActivity>
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => TrackInfoActivity(course: course)));
+            builder: (context) => TrackInfoActivity(course)));
   }
 
   @override

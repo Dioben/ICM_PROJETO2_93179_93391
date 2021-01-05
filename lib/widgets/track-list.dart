@@ -56,7 +56,7 @@ class ViewListState extends State<ViewTrackList>{
   doQuery();
   }
 
-  goToInfo(Course course) { Navigator.push(context,MaterialPageRoute(builder: (context) => TrackInfoActivity(course: course,)));}
+  goToInfo(Course course) { Navigator.push(context,MaterialPageRoute(builder: (context) => TrackInfoActivity(course)));}
 
   void doQuery() async{
     if (queryselectors[0]=="Anyone" && userpos==null){return;} //provide feedback to user here
