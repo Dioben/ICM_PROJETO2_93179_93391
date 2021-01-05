@@ -1,5 +1,6 @@
 import 'dart:async';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -11,20 +12,18 @@ import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/track-info.dart';
 
-
-
 const double CAMERA_ZOOM = 13;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
 
-class TrackingActivity extends StatefulWidget{
+class TrackingActivity extends StatefulWidget {
   const TrackingActivity({Key key}) : super(key: key);
   @override
-  State<StatefulWidget> createState() =>_TrackingState();
-
+  State<StatefulWidget> createState() => _TrackingState();
 }
 
-class _TrackingState extends State<TrackingActivity> {
+class _TrackingState extends State<TrackingActivity>
+    with SingleTickerProviderStateMixin {
   bool recording = false;
   StreamSubscription<Position> positionStream;
   Set<Marker> _markers;
@@ -34,84 +33,330 @@ class _TrackingState extends State<TrackingActivity> {
   List<LatLng> points;
   GoogleMapController mapController;
   StreamSubscription<AccelerometerEvent> accelStream;
-  double velocity=0;
-  double xaxis=0; //we disregard z axis because it includes gravity and doesnt matter for the most part
-  double yaxis=0;
+  double velocity = 0;
+  double xaxis =
+      0; //we disregard z axis because it includes gravity and doesnt matter for the most part
+  double yaxis = 0;
   bool submitted = false;
-  bool picturemode=false;
+  bool picturemode = false;
   final ImagePicker picker = ImagePicker();
   _TrackingState() {
     _markers = Set();
     _polylines = Set();
     points = [];
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high).then((value) {
-                                          init_pos= LatLng(value.latitude, value.longitude);setState(() {});
-                                          if (mapController!=null){mapController..animateCamera(CameraUpdate.newLatLng(init_pos));}
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((value) {
+      init_pos = LatLng(value.latitude, value.longitude);
+      setState(() {});
+      if (mapController != null) {
+        mapController..animateCamera(CameraUpdate.newLatLng(init_pos));
+      }
+    });
+  }
+  bool expanded = false;
+
+  AnimationController animationController;
+  Animation<double> slideAnimation;
+
+  @override
+  void initState() {
+    super.initState();
+
+    animationController = AnimationController(
+        duration: const Duration(milliseconds: 100), vsync: this);
+    slideAnimation =
+        Tween<double>(begin: 2.2, end: 1.0).animate(animationController);
+
+    animationController.addListener(() {
+      setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
     CameraPosition initialCameraPosition;
-    if (init_pos==null) {
-      initialCameraPosition =  CameraPosition(
+    if (init_pos == null) {
+      initialCameraPosition = CameraPosition(
           target: LatLng(0, -7.9306927),
           zoom: CAMERA_ZOOM,
           tilt: CAMERA_TILT,
-          bearing: CAMERA_BEARING);}
-    else{
-    initialCameraPosition =  CameraPosition(
-      target: init_pos,
-      zoom: CAMERA_ZOOM,
-      tilt: CAMERA_TILT,
-      bearing: CAMERA_BEARING);
+          bearing: CAMERA_BEARING);
+    } else {
+      initialCameraPosition = CameraPosition(
+          target: init_pos,
+          zoom: CAMERA_ZOOM,
+          tilt: CAMERA_TILT,
+          bearing: CAMERA_BEARING);
     }
 
-
-    //this should return different things if recording or not recording
-    if (!recording) {
-      return Scaffold(
-          appBar: AppBar(title: const Text("Tracking"),
-            actions: [
-              IconButton(icon: const Icon(Icons.play_arrow),
-                tooltip: "Start recording",
-                onPressed: () => startRecording(),)
-            ]
-            ,),
-          body: GoogleMap(
-            myLocationButtonEnabled: true,
-            compassEnabled: true,
-            tiltGesturesEnabled: false,
-            markers: _markers,
-            polylines: _polylines,
-            mapType: MapType.normal,
-            initialCameraPosition: initialCameraPosition,
-            onMapCreated: onMapCreated,
-            )
-      );
-    }
-    else {
-      return Scaffold(
-          appBar: AppBar(title: const Text("Tracking"),
-            actions: [
-              IconButton(icon: const Icon(Icons.stop),
-                tooltip: "Submit",
-                onPressed: submit,)
-            ]
-            ,),
-          body:GoogleMap(
-            myLocationButtonEnabled: true,
-            compassEnabled: true,
-            tiltGesturesEnabled: false,
-            markers: _markers,
-            polylines: _polylines,
-            mapType: MapType.normal,
-            initialCameraPosition: initialCameraPosition,
-              onMapCreated: onMapCreated
+    
+    return Scaffold(
+      appBar: AppBar(
+        title: const Text("Tracking"),
+        actions: [
+          Container(
+            margin: EdgeInsets.fromLTRB(0.0, 7.0, 0.0, 7.0),
+            child: (() {
+              if (!recording) return
+                Tooltip(
+                  message: "Start recording",
+                  child: RawMaterialButton(
+                    onPressed: () => startRecording(),
+                    elevation: 2.0,
+                    fillColor: Colors.greenAccent[700],
+                    padding: EdgeInsets.all(8.0),
+                    shape: CircleBorder(),
+                    child: Icon(Icons.play_arrow),
+                  ),
+                );
+              else return
+                Tooltip(
+                  message: "Submit",
+                  child: RawMaterialButton(
+                    onPressed: () => submit(),
+                    elevation: 2.0,
+                    fillColor: Colors.redAccent[700],
+                    padding: EdgeInsets.all(8.0),
+                    shape: CircleBorder(),
+                    child: Icon(Icons.stop),
+                  ),
+                );
+            })(),
+          ),
+        ],
+      ),
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          FractionallySizedBox(
+            alignment: Alignment(0.0, -1.0),
+            heightFactor: 0.8,
+            child: GoogleMap(
+              myLocationButtonEnabled: true,
+              compassEnabled: true,
+              tiltGesturesEnabled: false,
+              markers: _markers,
+              polylines: _polylines,
+              mapType: MapType.normal,
+              initialCameraPosition: initialCameraPosition,
+              onMapCreated: onMapCreated,
+              zoomControlsEnabled: false,
             ),
-      floatingActionButton: FloatingActionButton(child: Icon(Icons.camera_alt),onPressed: (){takePicture();},),
-      );
-    }
+          ),
+          FractionallySizedBox(
+            alignment: Alignment(0.0, slideAnimation.value),
+            heightFactor: 0.59,
+            child: Stack(
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(0.0, 74.0, 0.0, 0.0),
+                  child: SizedBox(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(color: Colors.white),
+                    ),
+                  ),
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(0.0, 80.0, 0.0, 0.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      Column(
+                        children: [
+                          Container(
+                            height: 20,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 0, 80, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Length:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                              ],
+                            )
+                          ),
+                          Container(
+                            height: 3,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 3, 80, 10),
+                            child: SizedBox(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            height: 20,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Current speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                              ],
+                            )
+                          ),
+                          Container(
+                            height: 3,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
+                            child: SizedBox(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            height: 20,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Runtime:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                              ],
+                            )
+                          ),
+                          Container(
+                            height: 3,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
+                            child: SizedBox(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            height: 20,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Maximum speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                              ],
+                            )
+                          ),
+                          Container(
+                            height: 3,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
+                            child: SizedBox(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          Container(
+                            height: 20,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                Text("Average speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                              ],
+                            )
+                          ),
+                          Container(
+                            height: 3,
+                            width: double.infinity,
+                            margin: EdgeInsets.fromLTRB(20, 3, 20, 6),
+                            child: SizedBox(
+                              child: DecoratedBox(
+                                decoration: BoxDecoration(color: Colors.green),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  )
+                  
+                ),
+                Align(
+                  alignment: Alignment(0.95, -1.0),
+                  child: SizedBox(
+                    width: 60,
+                    height: 100,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        (() {
+                          if (recording) return
+                            Tooltip(
+                              message: "Take a photo",
+                              child: RawMaterialButton(
+                                onPressed: () => takePicture(),
+                                elevation: 2.0,
+                                fillColor: Colors.green[800],
+                                padding: EdgeInsets.all(8.0),
+                                shape: CircleBorder(),
+                                child: Icon(Icons.camera_alt),
+                              ),
+                            );
+                          else return
+                            Container();
+                        })(),
+                        Tooltip(
+                          message: (() {
+                            if (!expanded) return "Expand";
+                            else return "Contract";
+                          })(),
+                          child: RawMaterialButton(
+                            onPressed: () => expandAndContractInfo(),
+                            elevation: 2.0,
+                            fillColor: Colors.green[800],
+                            padding: EdgeInsets.all(4.0),
+                            shape: CircleBorder(),
+                            child: (() {
+                            if (!expanded) return Icon(Icons.arrow_drop_up, size: 40);
+                            else return Icon(Icons.arrow_drop_down, size: 40);
+                            })(),
+                          ),
+                        ),
+                      ],
+                    )
+                  ),
+                ),
+              ]
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  void expandAndContractInfo() {
+    if (!expanded)
+      animationController.forward();
+    else
+      animationController.reverse();
+    setState(() {
+      expanded = !expanded;
+    });
   }
 
   startRecording() async {
@@ -120,75 +365,98 @@ class _TrackingState extends State<TrackingActivity> {
     setState(() {
       recording = true;
     });
-    Position position = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
-    init_pos = LatLng(position.latitude,position.longitude);
-    points.add( init_pos);
+    Position position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high);
+    init_pos = LatLng(position.latitude, position.longitude);
+    points.add(init_pos);
     course.appendNode(CourseNode.initial(position));
-    if (mapController!=null) {mapController.animateCamera(CameraUpdate.newLatLng(init_pos));}
+    if (mapController != null) {
+      mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
+    }
     setState(() {
-      _markers.add(Marker(markerId: MarkerId('Start'),infoWindow: InfoWindow(title: "Start"),position: init_pos));
+      _markers.add(Marker(
+          markerId: MarkerId('Start'),
+          infoWindow: InfoWindow(title: "Start"),
+          position: init_pos));
     });
 
-    positionStream = Geolocator.getPositionStream(desiredAccuracy: LocationAccuracy.bestForNavigation).listen(
-        (Position position){
-          velocity=position.speed;
-        init_pos = LatLng(position.latitude, position.longitude);
-        course.appendNode(CourseNode.followUp(position, course.nodes.last));
-        points.add(init_pos);
-        _polylines.add(Polyline(polylineId: PolylineId('our track'),visible: true,points: points,color: Colors.red));
-        _markers.add(Marker(markerId: MarkerId('Current'),infoWindow: InfoWindow(title: "Current"),position: init_pos));
-        if (!picturemode){setState(() {});
-        if (mapController!=null)mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
-        }
-        }
-
-    );
+    positionStream = Geolocator.getPositionStream(
+            desiredAccuracy: LocationAccuracy.bestForNavigation)
+        .listen((Position position) {
+      velocity = position.speed;
+      init_pos = LatLng(position.latitude, position.longitude);
+      course.appendNode(CourseNode.followUp(position, course.nodes.last));
+      points.add(init_pos);
+      _polylines.add(Polyline(
+          polylineId: PolylineId('our track'),
+          visible: true,
+          points: points,
+          color: Colors.red));
+      _markers.add(Marker(
+          markerId: MarkerId('Current'),
+          infoWindow: InfoWindow(title: "Current"),
+          position: init_pos));
+      if (!picturemode) {
+        setState(() {});
+        if (mapController != null)
+          mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
+      }
+    });
     accelStream = accelerometerEvents.listen((event) {
       //TODO: what the hell do i do with this
     });
   }
 
-  submit() async{
+  submit() async {
     //cancel all streams,submit course,view it
     if (submitted) return;
-    submitted=true;
+    submitted = true;
     positionStream.cancel();
     accelStream.cancel();
     course.finalize();
     course.name = 'da debug';
-   await FirebaseApiClient.instance.submitCourse(course);
-   Navigator.pushReplacement(context, MaterialPageRoute(builder: (context) => TrackInfoActivity(course: course)));
-
+    await FirebaseApiClient.instance.submitCourse(course);
+    Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+            builder: (context) => TrackInfoActivity(course: course)));
   }
-
 
   @override
   void dispose() {
-    if (positionStream!=null){
+    if (positionStream != null) {
       positionStream.cancel();
     }
-    if (accelStream!=null){accelStream.cancel();}
+    if (accelStream != null) {
+      accelStream.cancel();
+    }
     super.dispose();
   }
 
-
   void onMapCreated(GoogleMapController controller) {
-    if(init_pos!=null){controller.animateCamera(CameraUpdate.newLatLng(init_pos));mapController=controller;print("controller assigned");}
-
+    if (init_pos != null) {
+      controller.animateCamera(CameraUpdate.newLatLng(init_pos));
+      mapController = controller;
+      print("controller assigned");
+    }
   }
 
-  void takePicture() async{
+  void takePicture() async {
+    print("takePicture");
     try {
-      picturemode=true;
-      final PickedFile picture = await picker.getImage(source: ImageSource.camera);
+      picturemode = true;
+      final PickedFile picture =
+          await picker.getImage(source: ImageSource.camera);
       File picfile = File(picture.path);
       print("got to path");
-      picturemode=false;
+      picturemode = false;
       String upstreamurl = await FirebaseApiClient.instance.postImage(picfile);
       if (upstreamurl != null) {
         print("got url $upstreamurl");
         course.pictures.add(upstreamurl);
       }
-    }catch(e){print(e);}
+    } catch (e) {
+      print(e);
     }
+  }
 }

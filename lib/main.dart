@@ -12,7 +12,7 @@ void main() {
     home: StartFuture(),
   theme: ThemeData(
     accentColor: Colors.greenAccent,
-    primaryColor: Colors.green,
+    primaryColor: Colors.green[800],
     // This is the theme of your application.
     //
     // Try running your application with "flutter run". You'll see the
