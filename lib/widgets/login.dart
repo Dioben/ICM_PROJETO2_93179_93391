@@ -20,6 +20,7 @@ class LoginState extends State<LoginMenu>{
   Widget build(BuildContext context) {
     // TODO: implement build
     return Scaffold(
+      resizeToAvoidBottomInset: false,
 
       body:Padding(//maybe replace with column/expanded
         padding: const EdgeInsets.symmetric(vertical: 150,),
@@ -64,7 +65,7 @@ class LoginState extends State<LoginMenu>{
     setState(() {});
     try {
       UserCredential userCredential = await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: namecontrol.text,
+          email: namecontrol.text.trim(),
           password: passcontrol.text
       );
       await FirebaseApiClient.instance.setUser(userCredential.user);
