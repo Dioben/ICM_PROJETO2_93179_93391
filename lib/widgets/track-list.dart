@@ -51,7 +51,7 @@ class ViewListState extends State<ViewTrackList> {
               child: Container(
                 margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Colors.greenAccent)
+                  border: Border.all(color: Theme.of(context).primaryColor)
                 ),
                 child: new ListView.builder(
                       scrollDirection: Axis.vertical,
@@ -62,11 +62,197 @@ class ViewListState extends State<ViewTrackList> {
                           onTap: () => goToInfo(courses[index]),
                           child: Ink(
                             color: (() {
-                              if (index % 2 == 0) return Colors.green[100];
-                              else return Colors.lightGreen[100];
+                              if (index % 2 == 0) return Colors.grey[300];
+                              else return Colors.grey[200];
                             })(),
-                            height: 50,
-                            child: Text(courses[index].name),
+                            height: 220,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Track name:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                          Text(courses[index].name, style: TextStyle(fontSize: 15)),
+                                        ],
+                                      )
+                                    ),
+                                    Container(
+                                      height: 2,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
+                                      child: SizedBox(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: Colors.green),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Runner name:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                          Text(courses[index].user, style: TextStyle(fontSize: 15)),
+                                        ],
+                                      )
+                                    ),
+                                    Container(
+                                      height: 2,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
+                                      child: SizedBox(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: Colors.green),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Date uploaded:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                          Text(courses[index].getFormattedTimestamp() , style: TextStyle(fontSize: 15)),
+                                        ],
+                                      )
+                                    ),
+                                    Container(
+                                      height: 2,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
+                                      child: SizedBox(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: Colors.green),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Length:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                          Text(courses[index].formattedTrackLength() , style: TextStyle(fontSize: 15)),
+                                        ],
+                                      )
+                                    ),
+                                    Container(
+                                      height: 2,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
+                                      child: SizedBox(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: Colors.green),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Runtime:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                          Text(courses[index].formattedRuntime() , style: TextStyle(fontSize: 15)),
+                                        ],
+                                      )
+                                    ),
+                                    Container(
+                                      height: 2,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
+                                      child: SizedBox(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: Colors.green),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Rating:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                          Text(courses[index].rating.toString() , style: TextStyle(fontSize: 15)),
+                                        ],
+                                      )
+                                    ),
+                                    Container(
+                                      height: 2,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
+                                      child: SizedBox(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: Colors.green),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                Column(
+                                  children: [
+                                    Container(
+                                      height: 20,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
+                                      child: Row(
+                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                        children: [
+                                          Text("Distance away:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                                          Text("Unknown" , style: TextStyle(fontSize: 15)),
+                                        ],
+                                      )
+                                    ),
+                                    Container(
+                                      height: 2,
+                                      width: double.infinity,
+                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
+                                      child: SizedBox(
+                                        child: DecoratedBox(
+                                          decoration: BoxDecoration(color: Colors.green),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              ],
+                            )
                           ),
                         ),
                 ),
@@ -150,47 +336,112 @@ class TrackTypeSelectionState extends State<TrackTypeSelector> {
 
   @override
   Widget build(BuildContext context) {
-    return Row(
-      children: [
-        Expanded(
-          child: Center(
-            child: DropdownButton<String>(
-              onChanged: (String newval) {
-                setState(() => owner = newval);
-                widget.notifyParent(0, newval);
-              },
-              value: owner,
-              hint: Text("Owner:"),
-              items: <String>['Anyone', 'Me']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+    return Container(
+      margin: EdgeInsets.fromLTRB(10, 5, 10, 0),
+      child: Row(
+        children: [
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+              margin: EdgeInsets.fromLTRB(1, 0, 1, 0),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                shape: BoxShape.rectangle,
+                border: Border.all(color: Colors.grey[300]),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                )
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    child: Text("Owner:",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 10,
+                        ),
+                      )
+                  ),
+                  Container(
+                    height: 40,
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      iconEnabledColor: Theme.of(context).primaryColor,
+                      underline: Container(),
+                      onChanged: (String newval) {
+                        setState(() => owner = newval);
+                        widget.notifyParent(0, newval);
+                      },
+                      value: owner,
+                      hint: Text("Owner:"),
+                      items: <String>['Anyone', 'Me']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        ),
-        Expanded(
-          child: Center(
-            child: DropdownButton<String>(
-              onChanged: (String newval) {
-                setState(() => sort = newval);
-                widget.notifyParent(1, newval);
-              },
-              value: sort,
-              hint: Text("Sort by:"),
-              items: <String>['Date', 'Rating']
-                  .map<DropdownMenuItem<String>>((String value) {
-                return DropdownMenuItem<String>(
-                  value: value,
-                  child: Text(value),
-                );
-              }).toList(),
+          Expanded(
+            child: Container(
+              padding: EdgeInsets.fromLTRB(10, 10, 10, 0),
+              margin: EdgeInsets.fromLTRB(1, 0, 1, 0),
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                shape: BoxShape.rectangle,
+                border: Border.all(color: Colors.grey[300]),
+                borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(10),
+                  topRight: Radius.circular(10),
+                )
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: [
+                  Container(
+                    child: Text("Sort by:",
+                      style: TextStyle(
+                        color: Theme.of(context).primaryColor,
+                        fontSize: 10,
+                        ),
+                      )
+                  ),
+                  Container(
+                    height: 40,
+                    child: DropdownButton<String>(
+                      isExpanded: true,
+                      iconEnabledColor: Theme.of(context).primaryColor,
+                      underline: Container(),
+                      onChanged: (String newval) {
+                        setState(() => sort = newval);
+                        widget.notifyParent(1, newval);
+                      },
+                      value: sort,
+                      hint: Text("Sort by:"),
+                      items: <String>['Date', 'Rating']
+                          .map<DropdownMenuItem<String>>((String value) {
+                        return DropdownMenuItem<String>(
+                          value: value,
+                          child: Text(value),
+                        );
+                      }).toList(),
+                    ),
+                  ),
+                ],
+              ),
             ),
           ),
-        )
-      ],
+        ],
+      ),
     );
   }
 }
