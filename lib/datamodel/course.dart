@@ -95,6 +95,10 @@ class Course{
      runtime = nodes.last.time_stamp - nodes.first.time_stamp;
      avg_speed = track_length/((runtime/1000)/3600);
    }
+
+   Stream<LatLng> unwindCourse() async*{
+     for (CourseNode x in nodes){yield x.toLatLng();}
+   }
    LatLng centerMapPoint(){return nodes.elementAt((nodes.length/2) as int).toLatLng();}
    String getFormattedTimestamp(){
      //todo: figure out the smart stuff to make it look nice

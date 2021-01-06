@@ -271,6 +271,7 @@ class ViewListState extends State<ViewTrackList> {
     doQuery();
   }
 
+
   goToInfo(Course course) {
     Navigator.push(
         context,

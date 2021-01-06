@@ -172,7 +172,7 @@ class _TrackingState extends State<TrackingActivity>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Length:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                                Text((course==null)?"":course.formattedTrackLength(), style: TextStyle(fontSize: 17)),
                               ],
                             )
                           ),
@@ -198,7 +198,7 @@ class _TrackingState extends State<TrackingActivity>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Current speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                                Text((course==null)?"":velocity.toStringAsFixed(2)+" km/h", style: TextStyle(fontSize: 17)),
                               ],
                             )
                           ),
@@ -224,7 +224,7 @@ class _TrackingState extends State<TrackingActivity>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Runtime:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                                Text((course==null)?"":course.formattedRuntime(), style: TextStyle(fontSize: 17)),
                               ],
                             )
                           ),
@@ -250,7 +250,7 @@ class _TrackingState extends State<TrackingActivity>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Maximum speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                                Text((course==null)?"":course.formattedMaxSpeed(), style: TextStyle(fontSize: 17)),
                               ],
                             )
                           ),
@@ -276,7 +276,7 @@ class _TrackingState extends State<TrackingActivity>
                               mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text("Average speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text("Unknown", style: TextStyle(fontSize: 17)),
+                                Text((course==null)?"":course.formattedAvgSpeed(), style: TextStyle(fontSize: 17)),
                               ],
                             )
                           ),
@@ -383,7 +383,7 @@ class _TrackingState extends State<TrackingActivity>
     positionStream = Geolocator.getPositionStream(
             desiredAccuracy: LocationAccuracy.bestForNavigation)
         .listen((Position position) {
-      velocity = position.speed;
+      velocity = position.speed/1000*3600;
       init_pos = LatLng(position.latitude, position.longitude);
       course.appendNode(CourseNode.followUp(position, course.nodes.last));
       points.add(init_pos);
@@ -419,7 +419,7 @@ class _TrackingState extends State<TrackingActivity>
     Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-            builder: (context) => TrackInfoActivity(course: course)));
+            builder: (context) => TrackInfoActivity(course)));
   }
 
   @override
