@@ -33,6 +33,7 @@ dependencies:
   vector_math: any
   sensors: '>=0.4.0  <2.0.0'
   image_picker:
+  timeago:
 dev_dependencies:
   flutter_test:
     sdk: flutter

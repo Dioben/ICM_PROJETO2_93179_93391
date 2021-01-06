@@ -17,6 +17,9 @@ class ViewListState extends State<ViewTrackList> {
   StreamSubscription<Course> updateStream;
   LatLng userpos;
   List<String> queryselectors = ["Anyone", "Date"];
+  double currLat;
+  double currLon;
+
   @override
   ViewListState() {
     courses = [];
@@ -31,6 +34,7 @@ class ViewListState extends State<ViewTrackList> {
         });
       }
     });
+    getCurrentPosition();
   }
   Widget build(BuildContext context) {
     // TODO: implement build
@@ -65,192 +69,20 @@ class ViewListState extends State<ViewTrackList> {
                               if (index % 2 == 0) return Colors.grey[300];
                               else return Colors.grey[200];
                             })(),
-                            height: 220,
+                            height: 180,
                             child: Column(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Track name:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                          Text(courses[index].name, style: TextStyle(fontSize: 15)),
-                                        ],
-                                      )
-                                    ),
-                                    Container(
-                                      height: 2,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                                      child: SizedBox(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Runner name:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                          Text(courses[index].user, style: TextStyle(fontSize: 15)),
-                                        ],
-                                      )
-                                    ),
-                                    Container(
-                                      height: 2,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                                      child: SizedBox(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Date uploaded:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                          Text(courses[index].getFormattedTimestamp() , style: TextStyle(fontSize: 15)),
-                                        ],
-                                      )
-                                    ),
-                                    Container(
-                                      height: 2,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                                      child: SizedBox(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Length:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                          Text(courses[index].formattedTrackLength() , style: TextStyle(fontSize: 15)),
-                                        ],
-                                      )
-                                    ),
-                                    Container(
-                                      height: 2,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                                      child: SizedBox(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Runtime:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                          Text(courses[index].formattedRuntime() , style: TextStyle(fontSize: 15)),
-                                        ],
-                                      )
-                                    ),
-                                    Container(
-                                      height: 2,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                                      child: SizedBox(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Rating:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                          Text(courses[index].rating.toString() , style: TextStyle(fontSize: 15)),
-                                        ],
-                                      )
-                                    ),
-                                    Container(
-                                      height: 2,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                                      child: SizedBox(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  children: [
-                                    Container(
-                                      height: 20,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 3, 10, 0),
-                                      child: Row(
-                                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                        children: [
-                                          Text("Distance away:", style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
-                                          Text("Unknown" , style: TextStyle(fontSize: 15)),
-                                        ],
-                                      )
-                                    ),
-                                    Container(
-                                      height: 2,
-                                      width: double.infinity,
-                                      margin: EdgeInsets.fromLTRB(10, 0, 10, 3),
-                                      child: SizedBox(
-                                        child: DecoratedBox(
-                                          decoration: BoxDecoration(color: Colors.green),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                TrackItemField(title: "Track name:", value: courses[index].name),
+                                TrackItemField(title: "Runner name:", value: courses[index].user),
+                                TrackItemField(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
+                                TrackItemField(title: "Length:", value: courses[index].formattedTrackLength()),
+                                TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
+                                TrackItemField(title: "Rating:", value: courses[index].rating.toString()),
+                                TrackItemField(title: "Distance away:", value: (() {
+                                  if (currLon != null && currLat != null) return courses[index].formattedDistance(currLat, currLon);
+                                  else return "Unknown";
+                                })()),
                               ],
                             )
                           ),
@@ -266,6 +98,14 @@ class ViewListState extends State<ViewTrackList> {
         ));
   }
 
+  getCurrentPosition() async {
+    Position currPos = await Geolocator.getCurrentPosition();
+    setState(() {
+      currLat = currPos.latitude;
+      currLon = currPos.longitude;
+    });
+  }
+
   updateSelection(int selector, String value) {
     queryselectors[selector] = value;
     doQuery();
@@ -275,10 +115,8 @@ class ViewListState extends State<ViewTrackList> {
   goToInfo(Course course) {
     Navigator.push(
         context,
-        MaterialPageRoute(
-            builder: (context) => TrackInfoActivity(
-                  course: course,
-                )));
+        MaterialPageRoute(builder: (context) => TrackInfoActivity(course))
+    );
   }
 
   void doQuery() async {
@@ -321,6 +159,47 @@ class ViewListState extends State<ViewTrackList> {
         });
       }
     }
+  }
+}
+
+class TrackItemField extends StatefulWidget {
+  TrackItemField({Key key, @required this.title, @required this.value}) : super(key: key);
+  final String title;
+  final String value;
+
+  @override
+  _TrackItemFieldState createState() => new _TrackItemFieldState();
+}
+
+class _TrackItemFieldState extends State<TrackItemField> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 20,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(widget.value , style: TextStyle(fontSize: 15)),
+            ],
+          )
+        ),
+        Container(
+          height: 2,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(10, 0, 10, 1),
+          child: SizedBox(
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: Colors.green),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
 

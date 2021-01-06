@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 class Course{
    int timestamp;
@@ -65,6 +66,7 @@ class Course{
      nodes=[];
      this.course_id = course.course_id;
      this.user = FirebaseAuth.instance.currentUser.displayName;
+     if (this.user == null) this.user = "";
      this.uID = FirebaseAuth.instance.currentUser.uid;
      max_speed=0;
      avg_speed=0;
@@ -78,6 +80,7 @@ class Course{
      pictures=[];
      nodes=[];
      this.user = FirebaseAuth.instance.currentUser.displayName;
+     if (this.user == null) this.user = "";
      this.course_id = FirebaseAuth.instance.currentUser.uid;
      this.uID = FirebaseAuth.instance.currentUser.uid;
      name = "";
@@ -101,9 +104,10 @@ class Course{
    }
    LatLng centerMapPoint(){return nodes.elementAt((nodes.length/2) as int).toLatLng();}
    String getFormattedTimestamp(){
-     //todo: figure out the smart stuff to make it look nice
-     Duration timepast =DateTime.now().difference(DateTime.fromMillisecondsSinceEpoch(timestamp));
-     return timepast.toString();}
+     DateTime date = DateTime.fromMillisecondsSinceEpoch(timestamp);
+     return timeago.format(date);
+    }
+
    String formattedRuntime(){
      double totsecs = runtime/1000;
      String ret ="";
@@ -133,6 +137,10 @@ class Course{
    String formattedAvgSpeed()=>avg_speed.toStringAsFixed(3)+ " km/h";
 
    String toString() => this.toJson().toString();
+
+   String formattedDistance(double currLat, double currLon) {
+     return (Geolocator.distanceBetween(lat, lon, currLat, currLon)/1000).toStringAsFixed(3) + " km";
+   }
 
    void finalize(){
      //calculate rating and avg_speed here, probably also duration based on nodes*time between node adds
