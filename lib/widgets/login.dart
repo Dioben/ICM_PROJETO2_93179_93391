@@ -1,7 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:track_keeper/Queries/FirebaseApiClient.dart';
-
+import 'package:track_keeper/widgets/sign-up.dart';
 import 'mainmenu.dart';
 
 class LoginMenu extends StatefulWidget{
@@ -45,7 +45,7 @@ class LoginState extends State<LoginMenu>{
                   Spacer(flex:2),
                   Expanded(flex:5,child: SizedBox(width:double.infinity,child: TextField(controller: passcontrol,obscureText: true,decoration: InputDecoration(hintText: "password"),))),
                   Spacer(flex:2),
-                  Expanded(flex:4,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: [Expanded(flex:8,child: SizedBox(height:double.infinity,child: ElevatedButton(child: Text("Login"),onPressed: ()=>login(),))),Spacer(flex:1),Expanded(flex:8,child: SizedBox(height: double.infinity,child: ElevatedButton(child: Text("Sign In"),onPressed: ()=>skipAhead(context),)))],)),
+                  Expanded(flex:4,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: [Expanded(flex:8,child: SizedBox(height:double.infinity,child: ElevatedButton(child: Text("Login"),onPressed: ()=>login(),))),Spacer(flex:1),Expanded(flex:8,child: SizedBox(height: double.infinity,child: ElevatedButton(child: Text("Sign Up"),onPressed: ()=>SignIn(context),)))],)),
 
                 ],
 
@@ -78,8 +78,8 @@ class LoginState extends State<LoginMenu>{
       }
     }
   }
-  void skipAhead(context) {
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => MainMenu()));
+  void SignIn(context) {
+    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => SignUpMenu()));
   }
 }
 
