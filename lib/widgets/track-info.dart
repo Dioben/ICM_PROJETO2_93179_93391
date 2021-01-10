@@ -106,7 +106,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
             ),
           ),
           widget.course.pictures.length == 0 ? Container() : Container(
-            height: MediaQuery.of(context).size.height/2,
+            height: MediaQuery.of(context).size.height/1.5,
             width: double.infinity,
             margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
             decoration: BoxDecoration(
@@ -169,7 +169,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
               ),
               Container(
                 height: (() {
-                  double maxSize = MediaQuery.of(context).size.height/1.35;
+                  double maxSize = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - AppBar().preferredSize.height*2 - 20;
                   if (maxSize > 135.0 * courses.length)
                     return 135.0 * courses.length;
                   return maxSize;
@@ -182,6 +182,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                   )
                 ),
                 child: ListView.builder(
+                  physics: ClampingScrollPhysics(),
                   itemExtent: 135,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
