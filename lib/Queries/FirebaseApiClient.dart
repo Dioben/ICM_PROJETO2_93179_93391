@@ -118,7 +118,7 @@ class FirebaseApiClient{
     }
   }
   Stream<Course> getOtherRuns(Course course) async*{
-    String uid = course.uID;
+    String uid = course.course_id;
     int ts = course.timestamp;
     QuerySnapshot result = await userCourses.where('course_id',isEqualTo: uid).get();
     Iterator it = result.docs.iterator;
