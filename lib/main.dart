@@ -11,7 +11,7 @@ void main() {
   runApp(MaterialApp(
     home: StartFuture(),
   theme: ThemeData(
-    accentColor: Colors.greenAccent,
+    accentColor: Colors.green[400],
     primaryColor: Colors.green[800],
     // This is the theme of your application.
     //

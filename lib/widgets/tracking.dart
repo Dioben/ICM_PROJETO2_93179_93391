@@ -39,6 +39,10 @@ class _TrackingState extends State<TrackingActivity>
   double yaxis = 0;
   bool submitted = false;
   bool picturemode = false;
+  bool expanded = false;
+  bool isPrivate = true;
+  bool isAnonymous = false;
+
   final ImagePicker picker = ImagePicker();
   _TrackingState() {
     _markers = Set();
@@ -53,7 +57,6 @@ class _TrackingState extends State<TrackingActivity>
       }
     });
   }
-  bool expanded = false;
 
   AnimationController animationController;
   Animation<double> slideAnimation;
@@ -91,6 +94,7 @@ class _TrackingState extends State<TrackingActivity>
 
     
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       appBar: AppBar(
         title: const Text("Tracking"),
         actions: [
@@ -113,7 +117,113 @@ class _TrackingState extends State<TrackingActivity>
                 Tooltip(
                   message: "Submit",
                   child: RawMaterialButton(
-                    onPressed: () => submit(),
+                    onPressed: () {
+                      // submit();
+                      return showDialog(
+                        context: context,
+                        builder: (context) {
+                          return StatefulBuilder(
+                            builder: (context, setState) {
+                              return AlertDialog(
+                                title: Text("Submit your track:"), 
+                                content: SingleChildScrollView(
+                                  child: Container(
+                                    margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
+                                    height: 205,
+                                    child: Column(
+                                      mainAxisAlignment: MainAxisAlignment.start,
+                                      children: [
+                                        TextField(
+                                          decoration: InputDecoration(
+                                            labelText: "Track name:",
+                                            border: OutlineInputBorder(
+                                              borderRadius: BorderRadius.circular(10),
+                                              borderSide: BorderSide()
+                                            ),
+                                          ),
+                                          style: TextStyle(
+                                            fontSize: 18
+                                          ),
+                                        ),
+                                        Container(
+                                          padding: EdgeInsets.fromLTRB(0, 3, 0, 0),
+                                          child: Row(
+                                            mainAxisAlignment: MainAxisAlignment.center,
+                                            children: [
+                                              RaisedButton(
+                                                color: isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
+                                                onPressed: () => setState(() => isPrivate = true),
+                                                textColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.only(
+                                                    topLeft: Radius.circular(7),
+                                                    bottomLeft: Radius.circular(7),
+                                                  )
+                                                ),
+                                                padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                                child: Text("Private",
+                                                  style: TextStyle(fontSize: 18),
+                                                ),
+                                              ),
+                                              RaisedButton(
+                                                color: !isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
+                                                onPressed: () => setState(() => isPrivate = false),
+                                                textColor: Colors.white,
+                                                shape: RoundedRectangleBorder(
+                                                  borderRadius: BorderRadius.only(
+                                                    topRight: Radius.circular(7),
+                                                    bottomRight: Radius.circular(7),
+                                                  )
+                                                ),
+                                                padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                                child: Text("Public",
+                                                  style: TextStyle(fontSize: 18),
+                                                ),
+                                              )
+                                            ],
+                                          ),
+                                        ),
+                                        CheckboxListTile(
+                                          dense: true,
+                                          value: isAnonymous,
+                                          onChanged: (newValue) {
+                                            setState(() {
+                                              isAnonymous = newValue;
+                                            });
+                                          },
+                                          controlAffinity: ListTileControlAffinity.leading,
+                                          contentPadding: EdgeInsets.all(0),
+                                          activeColor: Theme.of(context).accentColor,
+                                          title: Text("Anonymous",
+                                              style: TextStyle(fontSize: 18),
+                                          ),
+                                        ),
+                                        Container(
+                                          width: double.infinity,
+                                          alignment: Alignment.centerRight,
+                                          child: RaisedButton( 
+                                            onPressed: () { 
+                                              Navigator.of(context).pop(); 
+                                            },
+                                            color: Theme.of(context).accentColor,
+                                            child: Text("Confirm",
+                                              style: TextStyle(
+                                                fontSize: 18,
+                                                color: Colors.white
+                                                ),
+                                            ),
+                                          ),
+                                        ), 
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              );
+                            }
+                          );
+                        }
+                      );
+                    },
                     elevation: 2.0,
                     fillColor: Colors.redAccent[700],
                     padding: EdgeInsets.all(8.0),
@@ -162,136 +272,11 @@ class _TrackingState extends State<TrackingActivity>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      Column(
-                        children: [
-                          Container(
-                            height: 20,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 0, 80, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Length:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text((course==null)?"":course.formattedTrackLength(), style: TextStyle(fontSize: 17)),
-                              ],
-                            )
-                          ),
-                          Container(
-                            height: 3,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 3, 80, 10),
-                            child: SizedBox(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            height: 20,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Current speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text((course==null)?"":velocity.toStringAsFixed(2)+" km/h", style: TextStyle(fontSize: 17)),
-                              ],
-                            )
-                          ),
-                          Container(
-                            height: 3,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
-                            child: SizedBox(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            height: 20,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Runtime:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text((course==null)?"":course.formattedRuntime(), style: TextStyle(fontSize: 17)),
-                              ],
-                            )
-                          ),
-                          Container(
-                            height: 3,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
-                            child: SizedBox(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            height: 20,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Maximum speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text((course==null)?"":course.formattedMaxSpeed(), style: TextStyle(fontSize: 17)),
-                              ],
-                            )
-                          ),
-                          Container(
-                            height: 3,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
-                            child: SizedBox(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          Container(
-                            height: 20,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text("Average speed:", style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                                Text((course==null)?"":course.formattedAvgSpeed(), style: TextStyle(fontSize: 17)),
-                              ],
-                            )
-                          ),
-                          Container(
-                            height: 3,
-                            width: double.infinity,
-                            margin: EdgeInsets.fromLTRB(20, 3, 20, 6),
-                            child: SizedBox(
-                              child: DecoratedBox(
-                                decoration: BoxDecoration(color: Colors.green),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
+                      TrackItemField(title: "Length:", value: (course==null)?"":course.formattedTrackLength(), rightBorder: 80,),
+                      TrackItemField(title: "Current speed:", value: (course==null)?"":velocity.toStringAsFixed(2)+" km/h",),
+                      TrackItemField(title: "Runtime:", value: (course==null)?"":course.formattedRuntime(),),
+                      TrackItemField(title: "Maximum speed:", value: (course==null)?"":course.formattedMaxSpeed(),),
+                      TrackItemField(title: "Average speed:", value: (course==null)?"":course.formattedAvgSpeed(),),
                     ],
                   )
                   
@@ -458,5 +443,48 @@ class _TrackingState extends State<TrackingActivity>
     } catch (e) {
       print(e);
     }
+  }
+}
+
+
+class TrackItemField extends StatefulWidget {
+  TrackItemField({Key key, @required this.title, @required this.value, this.rightBorder}) : super(key: key);
+  final String title;
+  final String value;
+  final double rightBorder;
+
+  @override
+  _TrackItemFieldState createState() => new _TrackItemFieldState();
+}
+
+class _TrackItemFieldState extends State<TrackItemField> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 20,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(20, 0, widget.rightBorder == null ? 20 : widget.rightBorder, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Text(widget.value , style: TextStyle(fontSize: 17)),
+            ],
+          )
+        ),
+        Container(
+          height: 3,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(20, 3, widget.rightBorder == null ? 20 : widget.rightBorder, 10),
+          child: SizedBox(
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: Colors.green),
+            ),
+          ),
+        ),
+      ],
+    );
   }
 }
