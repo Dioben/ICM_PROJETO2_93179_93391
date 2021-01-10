@@ -118,7 +118,6 @@ class _TrackingState extends State<TrackingActivity>
                   message: "Submit",
                   child: RawMaterialButton(
                     onPressed: () {
-                      // submit();
                       return showDialog(
                         context: context,
                         builder: (context) {
@@ -204,6 +203,7 @@ class _TrackingState extends State<TrackingActivity>
                                           child: RaisedButton( 
                                             onPressed: () { 
                                               Navigator.of(context).pop(); 
+                                              submit();
                                             },
                                             color: Theme.of(context).accentColor,
                                             child: Text("Confirm",

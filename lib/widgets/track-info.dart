@@ -8,6 +8,8 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/tracking.dart';
+import 'package:flutter_swiper/flutter_swiper.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 
 class TrackInfoActivity extends StatefulWidget {
   Course course;
@@ -91,6 +93,32 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
               },
             ),
           ),
+          widget.course.pictures.length == 0 ? Container() : Container(
+            height: MediaQuery.of(context).size.height/2,
+            width: double.infinity,
+            margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Theme.of(context).primaryColor
+              )
+            ),
+            child: Swiper(
+              itemCount: widget.course.pictures.length,
+              pagination: SwiperPagination(),
+              autoplay: true,
+              autoplayDelay: 10000,
+              loop: false,
+              itemBuilder: (BuildContext context, int index) {
+                return CachedNetworkImage(
+                  progressIndicatorBuilder: (context, url, downloadProgress) => 
+                          CircularProgressIndicator(value: downloadProgress.progress),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                  fit: BoxFit.fill,
+                  imageUrl: widget.course.pictures[index],
+                );
+              },
+            ),
+          ),
           TrackItemField(title: "Track name:", value: widget.course.name),
           TrackItemField(title: "Runner name:", value: widget.course.user),
           TrackItemField(
@@ -116,12 +144,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
               value: widget.course.formattedMaxSpeed()),
           TrackItemField(
               title: "Average speed:",
-              value: widget.course.formattedAvgSpeed()),
-          TrackItemField(
-              title: "pictures:",
-              value: (widget.course == null)
-                  ? ""
-                  : widget.course.pictures.toString()),
+              value: widget.course.formattedAvgSpeed())
         ],
       ),
     );

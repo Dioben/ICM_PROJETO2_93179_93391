@@ -34,6 +34,8 @@ dependencies:
   sensors: '>=0.4.0  <2.0.0'
   image_picker: any
   timeago: any
+  flutter_swiper: ^1.1.6
+  cached_network_image: ^2.5.0
 dev_dependencies:
   flutter_test:
     sdk: flutter
