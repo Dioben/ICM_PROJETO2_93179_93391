@@ -125,7 +125,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                   progressIndicatorBuilder: (context, url, downloadProgress) => 
                           CircularProgressIndicator(value: downloadProgress.progress),
                   errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.fill,
+                  fit: BoxFit.fitWidth,
                   imageUrl: widget.course.pictures[index],
                 );
               },
