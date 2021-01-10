@@ -42,7 +42,8 @@ class _TrackingState extends State<TrackingActivity>
   bool expanded = false;
   bool isPrivate = true;
   bool isAnonymous = false;
-
+  int steps_until_tracking =5;
+  TextEditingController namecontrol = TextEditingController();
   final ImagePicker picker = ImagePicker();
   _TrackingState() {
     _markers = Set();
@@ -133,6 +134,7 @@ class _TrackingState extends State<TrackingActivity>
                                       mainAxisAlignment: MainAxisAlignment.start,
                                       children: [
                                         TextField(
+                                          controller: namecontrol,
                                           decoration: InputDecoration(
                                             labelText: "Track name:",
                                             border: OutlineInputBorder(
@@ -369,8 +371,12 @@ class _TrackingState extends State<TrackingActivity>
             desiredAccuracy: LocationAccuracy.bestForNavigation)
         .listen((Position position) {
       velocity = position.speed/1000*3600;
+      if (velocity>100){steps_until_tracking=5;return;}
+      if (steps_until_tracking>0){steps_until_tracking--;return;}
+
       init_pos = LatLng(position.latitude, position.longitude);
-      course.appendNode(CourseNode.followUp(position, course.nodes.last));
+      CourseNode node = CourseNode.followUp(position, course.nodes.last);
+      course.appendNode(node);
       points.add(init_pos);
       _polylines.add(Polyline(
           polylineId: PolylineId('our track'),
@@ -399,7 +405,9 @@ class _TrackingState extends State<TrackingActivity>
     positionStream.cancel();
     accelStream.cancel();
     course.finalize();
-    course.name = 'da debug';
+    course.name = namecontrol.text.trim();
+    course.isprivate= isPrivate;
+    course.anon = isAnonymous;
     await FirebaseApiClient.instance.submitCourse(course);
     Navigator.pushReplacement(
         context,
