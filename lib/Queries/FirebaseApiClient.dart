@@ -120,7 +120,7 @@ class FirebaseApiClient{
   Stream<Course> getOtherRuns(Course course) async*{
     String uid = course.uID;
     int ts = course.timestamp;
-    QuerySnapshot result = await userCourses.where('course_id',isEqualTo: uid).orderBy("rating", descending: true).get();
+    QuerySnapshot result = await userCourses.where('course_id',isEqualTo: uid).get();
     Iterator it = result.docs.iterator;
     while (it.moveNext()){
       DocumentSnapshot element = it.current;
