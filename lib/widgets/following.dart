@@ -12,7 +12,7 @@ import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/track-info.dart';
 
-const double CAMERA_ZOOM = 13;
+const double CAMERA_ZOOM = 15;
 const double CAMERA_TILT = 0;
 const double CAMERA_BEARING = 30;
 
@@ -299,7 +299,7 @@ class _FollowingState extends State<FollowingActivity>
                                   child: RawMaterialButton(
                                     onPressed: () => takePicture(),
                                     elevation: 2.0,
-                                    fillColor: Colors.green[800],
+                                    fillColor: Theme.of(context).accentColor,
                                     padding: EdgeInsets.all(8.0),
                                     shape: CircleBorder(),
                                     child: Icon(Icons.camera_alt),
@@ -316,7 +316,7 @@ class _FollowingState extends State<FollowingActivity>
                               child: RawMaterialButton(
                                 onPressed: () => expandAndContractInfo(),
                                 elevation: 2.0,
-                                fillColor: Colors.green[800],
+                                fillColor: Theme.of(context).accentColor,
                                 padding: EdgeInsets.all(4.0),
                                 shape: CircleBorder(),
                                 child: (() {
@@ -490,7 +490,7 @@ class _TrackItemFieldState extends State<TrackItemField> {
           margin: EdgeInsets.fromLTRB(20, 3, widget.rightBorder == null ? 20 : widget.rightBorder, 10),
           child: SizedBox(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.green),
+              decoration: BoxDecoration(color: Theme.of(context).accentColor),
             ),
           ),
         ),
