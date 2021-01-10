@@ -156,7 +156,60 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
               value: widget.course.formattedMaxSpeed()),
           TrackItemField(
               title: "Average speed:",
-              value: widget.course.formattedAvgSpeed())
+              value: widget.course.formattedAvgSpeed()),
+          Column(
+            children: [
+              Container(
+                width: double.infinity,
+                margin: EdgeInsets.fromLTRB(20, 10 , 20, 0),
+                child: AppBar(
+                  title: Text("Runs made on the same course"),
+                  automaticallyImplyLeading: false,
+                ),
+              ),
+              Container(
+                height: (() {
+                  double maxSize = MediaQuery.of(context).size.height/1.35;
+                  if (maxSize > 135.0 * courses.length)
+                    return 135.0 * courses.length;
+                  return maxSize;
+                })(),
+                width: double.infinity,
+                margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                decoration: BoxDecoration(
+                  border: Border.all(
+                    color: Theme.of(context).primaryColor
+                  )
+                ),
+                child: ListView.builder(
+                  itemExtent: 135,
+                  scrollDirection: Axis.vertical,
+                  shrinkWrap: true,
+                  itemCount: courses.length,
+                  itemBuilder: (context, index) =>
+                    InkWell(
+                      onTap: () => goToInfo(courses[index]),
+                      child: Ink(
+                        color: (() {
+                          if (index % 2 == 0) return Colors.grey[300];
+                          else return Colors.grey[200];
+                        })(),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            TrackItemFieldList(title: "Track name:", value: courses[index].name),
+                            TrackItemFieldList(title: "Runner name:", value: courses[index].user),
+                            TrackItemFieldList(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
+                            TrackItemFieldList(title: "Runtime:", value: courses[index].formattedRuntime()),
+                            TrackItemFieldList(title: "Rating:", value: courses[index].rating.toString()),
+                          ],
+                        )
+                      ),
+                    ),
+                  ),
+              ),
+            ],
+          ),
         ],
       ),
     );
@@ -173,6 +226,13 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
   void goToFollowing(context) {
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => TrackingActivity()));
+  }
+
+  goToInfo(Course course) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => TrackInfoActivity(course))
+    );
   }
 
   void onMapCreated(GoogleMapController controller) {
@@ -237,6 +297,48 @@ class _TrackItemFieldState extends State<TrackItemField> {
           height: 2,
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
+          child: SizedBox(
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: Colors.green),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+
+class TrackItemFieldList extends StatefulWidget {
+  TrackItemFieldList({Key key, @required this.title, @required this.value}) : super(key: key);
+  final String title;
+  final String value;
+
+  @override
+  _TrackItemFieldListState createState() => new _TrackItemFieldListState();
+}
+
+class _TrackItemFieldListState extends State<TrackItemFieldList> {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          height: 20,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(widget.value , style: TextStyle(fontSize: 15)),
+            ],
+          )
+        ),
+        Container(
+          height: 2,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(10, 0, 10, 1),
           child: SizedBox(
             child: DecoratedBox(
               decoration: BoxDecoration(color: Colors.green),
