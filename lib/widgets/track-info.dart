@@ -61,8 +61,20 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
       appBar: AppBar(
         title: Text(widget.course.name),
         actions: [
-          FlatButton(
-              onPressed: () => goToFollowing(context), child: const Text("Run"))
+          Container(
+            margin: EdgeInsets.fromLTRB(7.0, 7.0, 7.0, 7.0),
+            width: 60,
+            child: RaisedButton( 
+              onPressed: () => goToFollowing(context),
+              color: Theme.of(context).accentColor,
+              child: Text("Run",
+                style: TextStyle(
+                  fontSize: 16,
+                  color: Colors.white
+                  ),
+              ),
+            ),
+          ),
         ],
       ),
       body: ListView(
@@ -183,6 +195,13 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
           color: Colors.red));
       setState(() {});
     });
+  }
+
+  @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
   }
 }
 

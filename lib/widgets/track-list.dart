@@ -160,6 +160,13 @@ class ViewListState extends State<ViewTrackList> {
       }
     }
   }
+
+  @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
+  }
 }
 
 class TrackItemField extends StatefulWidget {
@@ -323,5 +330,12 @@ class TrackTypeSelectionState extends State<TrackTypeSelector> {
         ],
       ),
     );
+  }
+
+  @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
+    }
   }
 }
