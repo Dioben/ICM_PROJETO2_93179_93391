@@ -170,8 +170,8 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
               Container(
                 height: (() {
                   double maxSize = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - AppBar().preferredSize.height*2 - 20;
-                  if (maxSize > 135.0 * courses.length)
-                    return 135.0 * courses.length;
+                  if (maxSize > 130.0 * courses.length)
+                    return 130.0 * courses.length;
                   return maxSize;
                 })(),
                 width: double.infinity,
@@ -183,7 +183,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                 ),
                 child: ListView.builder(
                   physics: ClampingScrollPhysics(),
-                  itemExtent: 135,
+                  itemExtent: 130,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: courses.length,
@@ -300,7 +300,7 @@ class _TrackItemFieldState extends State<TrackItemField> {
           margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
           child: SizedBox(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.green),
+              decoration: BoxDecoration(color: Theme.of(context).accentColor),
             ),
           ),
         ),
@@ -337,12 +337,12 @@ class _TrackItemFieldListState extends State<TrackItemFieldList> {
           )
         ),
         Container(
-          height: 2,
+          height: 1,
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(10, 0, 10, 1),
           child: SizedBox(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.green),
+              decoration: BoxDecoration(color: Theme.of(context).accentColor),
             ),
           ),
         ),

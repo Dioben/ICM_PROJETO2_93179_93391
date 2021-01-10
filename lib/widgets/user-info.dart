@@ -68,7 +68,7 @@ class _UserItemFieldState extends State<UserItemField> {
           margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
           child: SizedBox(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.green),
+              decoration: BoxDecoration(color: Theme.of(context).accentColor),
             ),
           ),
         ),

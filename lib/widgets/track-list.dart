@@ -58,7 +58,7 @@ class ViewListState extends State<ViewTrackList> {
                   border: Border.all(color: Theme.of(context).primaryColor)
                 ),
                 child: new ListView.builder(
-                  itemExtent: 180,
+                  itemExtent: 175,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: courses.length,
@@ -182,6 +182,7 @@ class _TrackItemFieldState extends State<TrackItemField> {
   @override
   Widget build(BuildContext context) {
     return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
       children: [
         Container(
           height: 20,
@@ -196,12 +197,12 @@ class _TrackItemFieldState extends State<TrackItemField> {
           )
         ),
         Container(
-          height: 2,
+          height: 1,
           width: double.infinity,
           margin: EdgeInsets.fromLTRB(10, 0, 10, 1),
           child: SizedBox(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.green),
+              decoration: BoxDecoration(color: Theme.of(context).accentColor),
             ),
           ),
         ),

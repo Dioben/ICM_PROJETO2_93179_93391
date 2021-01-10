@@ -298,7 +298,7 @@ class _TrackingState extends State<TrackingActivity>
                               child: RawMaterialButton(
                                 onPressed: () => takePicture(),
                                 elevation: 2.0,
-                                fillColor: Colors.green[800],
+                                fillColor: Theme.of(context).accentColor,
                                 padding: EdgeInsets.all(8.0),
                                 shape: CircleBorder(),
                                 child: Icon(Icons.camera_alt),
@@ -315,7 +315,7 @@ class _TrackingState extends State<TrackingActivity>
                           child: RawMaterialButton(
                             onPressed: () => expandAndContractInfo(),
                             elevation: 2.0,
-                            fillColor: Colors.green[800],
+                            fillColor: Theme.of(context).accentColor,
                             padding: EdgeInsets.all(4.0),
                             shape: CircleBorder(),
                             child: (() {
@@ -488,7 +488,7 @@ class _TrackItemFieldState extends State<TrackItemField> {
           margin: EdgeInsets.fromLTRB(20, 3, widget.rightBorder == null ? 20 : widget.rightBorder, 10),
           child: SizedBox(
             child: DecoratedBox(
-              decoration: BoxDecoration(color: Colors.green),
+              decoration: BoxDecoration(color: Theme.of(context).accentColor),
             ),
           ),
         ),
