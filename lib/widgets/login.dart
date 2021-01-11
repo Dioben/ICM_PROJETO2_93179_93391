@@ -15,133 +15,150 @@ class LoginState extends State<LoginMenu> {
   TextEditingController namecontrol = TextEditingController();
   TextEditingController passcontrol = TextEditingController();
 
+  final _formKey = GlobalKey<FormState>();
+  String errorCode;
+
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
-      resizeToAvoidBottomInset: false,
-      body: Padding(
-        //maybe replace with column/expanded
-        padding: const EdgeInsets.symmetric(
-          vertical: 150,
-        ),
-
-        child: Row(
-          children: [
-            Spacer(
-              flex: 2,
-            ),
-            Expanded(
-              flex: 6,
-              child: Center(
-                child: Column(
-                  children: [
-                    Expanded(
-                      flex: 4,
-                      child: Stack(
-                        children: [
-                          Text(
-                            "Welcome",
-                            style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                                foreground: Paint()
-                                  ..style = PaintingStyle.stroke
-                                  ..strokeWidth = 2
-                                  ..color = Colors.black),
-                          ),
-                          Text(
-                            "Welcome",
-                            style: TextStyle(
-                                fontSize: 25,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.green),
-                          ),
-                        ],
+        resizeToAvoidBottomInset: false,
+        body: Container(
+          width: double.infinity,
+          height: double.infinity,
+          child: FractionallySizedBox(
+            widthFactor: 0.8,
+            child: Form(
+              key: _formKey,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Text(
+                    "Track Keeper",
+                    style: TextStyle(
+                        fontSize: 35,
+                        fontWeight: FontWeight.bold,
+                        color: Theme.of(context).accentColor,
+                        shadows: [
+                          Shadow(
+                              color: Colors.black45,
+                              blurRadius: 1,
+                              offset: Offset(1, 1.5))
+                        ]),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                    child: TextFormField(
+                      controller: namecontrol,
+                      decoration: InputDecoration(
+                        labelText: "Email:",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide()),
                       ),
+                      style: TextStyle(fontSize: 16),
+                      validator: (value) {
+                        if (value.isEmpty)
+                          return "Please write your email";
+                        else if (errorCode != null)
+                          if (errorCode == "invalid-email" || errorCode == "user-not-found")
+                            return "Invalid email";
+                        return null;
+                      },
                     ),
-                    Spacer(flex: 2),
-                    Expanded(
-                        flex: 5,
-                        child: SizedBox(
-                            width: double.infinity,
-                            child: TextField(
-                              controller: namecontrol,
-                              decoration: InputDecoration(
-                                labelText: "Email:",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide()
-                                ),
-                              ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                    child: TextFormField(
+                      controller: passcontrol,
+                      obscureText: true,
+                      decoration: InputDecoration(
+                        labelText: "Password:",
+                        border: OutlineInputBorder(
+                            borderRadius: BorderRadius.circular(10),
+                            borderSide: BorderSide()),
+                      ),
+                      style: TextStyle(fontSize: 16),
+                      validator: (value) {
+                        if (value.isEmpty)
+                          return "Please write your password";
+                        else if (errorCode != null)
+                          if (errorCode == "wrong-password")
+                            return "Wrong password";
+                        return null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    width: 160,
+                    height: 45,
+                    child: ElevatedButton(
+                      child: Text(
+                        "Login",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      onPressed: () async {
+                        await login();
+                        _formKey.currentState.validate();
+                        errorCode = null;
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(15, 20, 15, 0),
+                    width: double.infinity,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                        Container(
+                            margin: EdgeInsets.fromLTRB(5, 0, 5, 0),
+                            child: Text(
+                              "Don't have an account?",
                               style: TextStyle(
-                                  fontSize: 16
-                              ),
-                            ),
+                                  fontSize: 13, color: Colors.grey[600]),
                             )),
-                    Spacer(flex: 2),
-                    Expanded(
-                        flex: 5,
-                        child: SizedBox(
-                            width: double.infinity,
-                            child: TextField(
-                              controller: passcontrol,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                labelText: "Password:",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide()
-                                ),
-                              ),
-                              style: TextStyle(
-                                  fontSize: 16
-                              ),
-                            ),)),
-                    Spacer(flex: 2),
-                    Expanded(
-                        flex: 4,
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            Expanded(
-                                flex: 8,
-                                child: SizedBox(
-                                    height: double.infinity,
-                                    child: ElevatedButton(
-                                      child: Text("Login"),
-                                      onPressed: () => login(),
-                                    ))),
-                            Spacer(flex: 1),
-                            Expanded(
-                                flex: 8,
-                                child: SizedBox(
-                                    height: double.infinity,
-                                    child: ElevatedButton(
-                                      child: Text("Sign Up"),
-                                      onPressed: () => SignIn(context),
-                                    )))
-                          ],
-                        )),
-                  ],
-                ),
+                        Expanded(
+                          child: Container(
+                            height: 1,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    width: 160,
+                    height: 45,
+                    child: ElevatedButton(
+                      child: Text(
+                        "Sign Up",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      onPressed: () => SignIn(context),
+                    ),
+                  ),
+                ],
               ),
             ),
-            Spacer(
-              flex: 2,
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        ));
   }
 
   login() async {
     if (logging) {
       return;
     }
-    logging = true;
-    setState(() {});
+    setState(() {
+      logging = true;
+    });
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -150,10 +167,12 @@ class LoginState extends State<LoginMenu> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainMenu()));
     } on FirebaseAuthException catch (e) {
-      if (e.code == 'user-not-found') {
-        print('No user found for that email.');
-      } else if (e.code == 'wrong-password') {
-        print('Wrong password provided for that user.');
+      setState(() {
+        logging = false;
+        errorCode = e.code;
+      });
+      if (e.code == "too-many-requests") {
+        print(e.code + " -> " + e.toString()); // Should be shown in some way to the user
       }
     }
   }
