@@ -11,6 +11,8 @@ import 'package:track_keeper/widgets/tracking.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 
+import 'following.dart';
+
 class TrackInfoActivity extends StatefulWidget {
   Course course;
   @override
@@ -226,7 +228,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
 
   void goToFollowing(context) {
     Navigator.push(
-        context, MaterialPageRoute(builder: (context) => TrackingActivity()));
+        context, MaterialPageRoute(builder: (context) => FollowingActivity(widget.course)));
   }
 
   goToInfo(Course course) {

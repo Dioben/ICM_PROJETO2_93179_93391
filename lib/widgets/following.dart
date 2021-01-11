@@ -12,10 +12,9 @@ import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/datamodel/courseComp.dart';
 import 'package:track_keeper/widgets/track-info.dart';
+import 'package:track_keeper/widgets/tracking.dart';
 
-const double CAMERA_ZOOM = 15;
-const double CAMERA_TILT = 0;
-const double CAMERA_BEARING = 30;
+
 
 class FollowingActivity extends StatefulWidget {
   Course original;
@@ -34,6 +33,7 @@ class _FollowingState extends State<FollowingActivity>
   courseComp updater;
   LatLng init_pos;
   List<LatLng> points;
+  List<LatLng> ogpoints;
   GoogleMapController mapController;
   double velocity = 0;
   StreamSubscription<PedestrianStatus> pedometerStream;
@@ -46,10 +46,11 @@ class _FollowingState extends State<FollowingActivity>
   int steps_until_tracking =5;
   TextEditingController namecontrol = TextEditingController();
   final ImagePicker picker = ImagePicker();
-  _TrackingState() {
+  _FollowingState() {
     _markers = Set();
     _polylines = Set();
     points = [];
+    ogpoints = [];
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((value) {
       init_pos = LatLng(value.latitude, value.longitude);
@@ -66,7 +67,14 @@ class _FollowingState extends State<FollowingActivity>
   @override
   void initState() {
     super.initState();
-    //TODO: look into drawing the original course here
+    _markers.add(Marker(icon:BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        markerId: MarkerId('Original Start'),
+        infoWindow: InfoWindow(title: "Original Start"),
+        position: widget.original.nodes.first.toLatLng()));
+    _markers.add(Marker(icon:BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        markerId: MarkerId('Original End'),
+        infoWindow: InfoWindow(title: "Original End"),
+        position: widget.original.nodes.last.toLatLng()));
     animationController = AnimationController(
         duration: const Duration(milliseconds: 100), vsync: this);
     slideAnimation =
@@ -74,6 +82,10 @@ class _FollowingState extends State<FollowingActivity>
 
     animationController.addListener(() {
       setState(() {});
+    });
+    widget.original.unwindCourse().listen((event) {ogpoints.add(event);
+                                                    _polylines.add(Polyline(polylineId: PolylineId("original track"),visible: true,points: ogpoints,color: Colors.lightBlue));
+                                                    setState(() {});
     });
   }
 
@@ -348,8 +360,6 @@ class _FollowingState extends State<FollowingActivity>
   }
 
   startRecording() async {
-    //TODO: DESIGN COMPARER CLASS, CREATE AND USE IT HERE
-    //if (mapController==null){return;}
     course = Course.copy(widget.original);
     updater = courseComp(widget.original,course);
     setState(() {
