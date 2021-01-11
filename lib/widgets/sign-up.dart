@@ -17,7 +17,11 @@ class SignUpState extends State<SignUpMenu> {
 
   TextEditingController emailcontrol = TextEditingController();
   TextEditingController passcontrol = TextEditingController();
+  TextEditingController passconfcontrol = TextEditingController();
   TextEditingController namecontrol = TextEditingController();
+
+  final _formKey = GlobalKey<FormState>();
+  String errorCode;
 
   @override
   Widget build(BuildContext context) {
@@ -27,154 +31,148 @@ class SignUpState extends State<SignUpMenu> {
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      // appBar: AppBar(
-      //   title: Text("Sign up")
-      // ),
-      body: Padding(
-        //maybe replace with column/expanded
-        padding: const EdgeInsets.symmetric(
-          vertical: 150,
-        ),
-
-        child: Row(
-          children: [
-            Spacer(
-              flex: 2,
+      appBar: AppBar(
+        title: Text("Sign up")
+      ),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        margin: EdgeInsets.fromLTRB(0, 0, 0, AppBar().preferredSize.height),
+        child: FractionallySizedBox(
+          widthFactor: 0.8,
+          child: Form(
+            key: _formKey,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.center,
+              children: [
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 0, 0, 0),
+                  child: TextFormField(
+                    controller: namecontrol,
+                    decoration: InputDecoration(
+                      labelText: "Name:",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide()),
+                    ),
+                    style: TextStyle(fontSize: 16),
+                    validator: (value) {
+                      if (value.isEmpty)
+                        return "Please write a name";
+                      return null;
+                    },
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: TextFormField(
+                    controller: emailcontrol,
+                    decoration: InputDecoration(
+                      labelText: "Email:",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide()),
+                    ),
+                    style: TextStyle(fontSize: 16),
+                    validator: (value) {
+                      if (value.isEmpty)
+                        return "Please write an email";
+                      else if (errorCode != null)
+                        if (errorCode == "email-already-in-use")
+                          return "Email unavailable";
+                      return null;
+                    },
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: TextFormField(
+                    controller: passcontrol,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: "Password:",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide()),
+                    ),
+                    style: TextStyle(fontSize: 16),
+                    validator: (value) {
+                      if (value.isEmpty)
+                        return "Please write a password";
+                      else if (passconfcontrol.text != passcontrol.text)
+                        return "Passwords don't match";
+                      else if (errorCode != null)
+                        if (errorCode == "weak-password")
+                          return "Password should be at least 6 characters long";
+                      return null;
+                    },
+                  ),
+                ),
+                Container(
+                  margin: EdgeInsets.fromLTRB(0, 15, 0, 0),
+                  child: TextFormField(
+                    controller: passconfcontrol,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: "Confirm password:",
+                      border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(10),
+                          borderSide: BorderSide()),
+                    ),
+                    style: TextStyle(fontSize: 16),
+                    validator: (value) {
+                      if (passconfcontrol.text != passcontrol.text)
+                        return "Passwords don't match";
+                      return null;
+                    },
+                  ),
+                ),
+                Container(
+                    margin: EdgeInsets.fromLTRB(0, 20, 0, 0),
+                    width: 160,
+                    height: 45,
+                    child: ElevatedButton(
+                      child: Text(
+                        "Sign up",
+                        style: TextStyle(fontSize: 16),
+                      ),
+                      onPressed: () async {
+                        if (naming)
+                          await setUsername();
+                        else {
+                          await signUp();
+                        }
+                        _formKey.currentState.validate();
+                        errorCode = null;
+                      },
+                    ),
+                  ),
+              ],
             ),
-            Expanded(
-              flex: 8,
-              child: Center(
-                  child: Column(
-                children: [
-                  Expanded(
-                      flex: 5,
-                      child: SizedBox(
-                          width: double.infinity,
-                          child: TextField(
-                              controller: namecontrol,
-                              decoration: InputDecoration(
-                                labelText: "Name:",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide()
-                                ),
-                              ),
-                              style: TextStyle(
-                                  fontSize: 16
-                              ),
-                            ),)),
-                  Expanded(
-                      flex: 5,
-                      child: SizedBox(
-                          width: double.infinity,
-                          child: TextField(
-                              controller: emailcontrol,
-                              decoration: InputDecoration(
-                                labelText: "Email:",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide()
-                                ),
-                              ),
-                              style: TextStyle(
-                                  fontSize: 16
-                              ),
-                            ),)),
-                  Spacer(flex: 2),
-                  Expanded(
-                      flex: 5,
-                      child: SizedBox(
-                          width: double.infinity,
-                          child: TextField(
-                              controller: passcontrol,
-                              obscureText: true,
-                              decoration: InputDecoration(
-                                labelText: "Password:",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide()
-                                ),
-                              ),
-                              style: TextStyle(
-                                  fontSize: 16
-                              ),
-                            ),)),
-                  Expanded(
-                      flex: 5,
-                      child: SizedBox(
-                          width: double.infinity,
-                          child: TextField(
-                              // controller: passcontrol,
-                              obscureText: true,
-                              enabled: false,
-                              decoration: InputDecoration(
-                                labelText: "Confirm password:",
-                                border: OutlineInputBorder(
-                                    borderRadius: BorderRadius.circular(10),
-                                    borderSide: BorderSide()
-                                ),
-                              ),
-                              style: TextStyle(
-                                  fontSize: 16
-                              ),
-                            ),)),
-                  Spacer(flex: 2),
-                  Expanded(
-                      flex: 4,
-                      child: Row(
-                        children: [
-                          Spacer(flex: 2),
-                          Expanded(
-                              flex: 8,
-                              child: SizedBox(
-                                  height: double.infinity,
-                                  child: ElevatedButton(
-                                    child: Text("Sign Up"),
-                                    onPressed: () => naming
-                                        ? setUsername(context)
-                                        : signUp(context),
-                                  ))),
-                          Spacer(flex: 2)
-                        ],
-                      ))
-                ],
-              )),
-            ),
-            Spacer(
-              flex: 2,
-            ),
-          ],
+          ),
         ),
       ),
     );
   }
 
-  signUp(context) async {
+  signUp() async {
     signing = true;
-    setState(() {});
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .createUserWithEmailAndPassword(
               email: emailcontrol.text.trim(), password: passcontrol.text);
       naming = true;
       signing = false;
-      setState(() {});
     } on FirebaseAuthException catch (e) {
       signing = false;
+      errorCode = e.code;
       setState(() {});
-      print(e);
-      if (e.code == 'weak-password') {
-        print('The password provided is too weak.');
-      } else if (e.code == 'email-already-in-use') {
-        print('The account already exists for that email.');
-      }
-    } catch (e) {
-      print(e);
     }
-    if (naming) setUsername(context);
+    if (naming) await setUsername();
   }
 
-  setUsername(context) async {
+  setUsername() async {
     //separated in case the whole process fails to go through
     currentlynaming =
         true; //prevent button spam, maybe loading screen? idk if loading screen setState here
@@ -185,7 +183,6 @@ class SignUpState extends State<SignUpMenu> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainMenu()));
     } catch (e) {
-      print(e);
       currentlynaming = false;
     }
   }

@@ -59,7 +59,7 @@ class LoginState extends State<LoginMenu> {
                       style: TextStyle(fontSize: 16),
                       validator: (value) {
                         if (value.isEmpty)
-                          return "Please write your email";
+                          return "Please write an email";
                         else if (errorCode != null)
                           if (errorCode == "invalid-email" || errorCode == "user-not-found")
                             return "Invalid email";
@@ -81,7 +81,7 @@ class LoginState extends State<LoginMenu> {
                       style: TextStyle(fontSize: 16),
                       validator: (value) {
                         if (value.isEmpty)
-                          return "Please write your password";
+                          return "Please write a password";
                         else if (errorCode != null)
                           if (errorCode == "wrong-password")
                             return "Wrong password";
@@ -139,7 +139,7 @@ class LoginState extends State<LoginMenu> {
                     height: 45,
                     child: ElevatedButton(
                       child: Text(
-                        "Sign Up",
+                        "Sign up",
                         style: TextStyle(fontSize: 16),
                       ),
                       onPressed: () => SignIn(context),
@@ -156,9 +156,7 @@ class LoginState extends State<LoginMenu> {
     if (logging) {
       return;
     }
-    setState(() {
-      logging = true;
-    });
+    logging = true;
     try {
       UserCredential userCredential = await FirebaseAuth.instance
           .signInWithEmailAndPassword(
@@ -167,8 +165,8 @@ class LoginState extends State<LoginMenu> {
       Navigator.pushReplacement(
           context, MaterialPageRoute(builder: (context) => MainMenu()));
     } on FirebaseAuthException catch (e) {
+      logging = false;
       setState(() {
-        logging = false;
         errorCode = e.code;
       });
       if (e.code == "too-many-requests") {
@@ -178,7 +176,7 @@ class LoginState extends State<LoginMenu> {
   }
 
   void SignIn(context) {
-    Navigator.pushReplacement(
+    Navigator.push(
         context, MaterialPageRoute(builder: (context) => SignUpMenu()));
   }
 }
