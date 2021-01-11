@@ -157,7 +157,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
           TrackItemField(
               title: "Average speed:",
               value: widget.course.formattedAvgSpeed()),
-          Column(
+          courses.length == 0 ? Container(height: 10) : Column(
             children: [
               Container(
                 width: double.infinity,
