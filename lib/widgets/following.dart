@@ -10,6 +10,7 @@ import 'package:image_picker/image_picker.dart';
 import 'package:pedometer/pedometer.dart';
 import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
+import 'package:track_keeper/datamodel/courseComp.dart';
 import 'package:track_keeper/widgets/track-info.dart';
 
 const double CAMERA_ZOOM = 15;
@@ -30,6 +31,7 @@ class _FollowingState extends State<FollowingActivity>
   Set<Marker> _markers;
   Set<Polyline> _polylines;
   Course course;
+  courseComp updater;
   LatLng init_pos;
   List<LatLng> points;
   GoogleMapController mapController;
@@ -348,7 +350,8 @@ class _FollowingState extends State<FollowingActivity>
   startRecording() async {
     //TODO: DESIGN COMPARER CLASS, CREATE AND USE IT HERE
     //if (mapController==null){return;}
-    course = Course.original();
+    course = Course.copy(widget.original);
+    updater = courseComp(widget.original,course);
     setState(() {
       recording = true;
     });
@@ -375,8 +378,7 @@ class _FollowingState extends State<FollowingActivity>
       if (steps_until_tracking>0){steps_until_tracking--;return;}
 
       init_pos = LatLng(position.latitude, position.longitude);
-      CourseNode node = CourseNode.followUp(position, course.nodes.last);
-      course.appendNode(node);
+      updater.appendNode(position);
       points.add(init_pos);
       _polylines.add(Polyline(
           polylineId: PolylineId('our track'),

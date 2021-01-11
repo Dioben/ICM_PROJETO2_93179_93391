@@ -11,7 +11,7 @@ class courseComp{
    bool validcopy;
    var errorcode;
    LatLng diffOG;
-  CourseComp(Course original, Course dupe){
+  courseComp(Course original, Course dupe){
     og = original;
     copy=dupe;
     validcopy= true;
