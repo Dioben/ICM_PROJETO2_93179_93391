@@ -7,7 +7,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sensors/sensors.dart';
+import 'package:pedometer/pedometer.dart';
 import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/track-info.dart';
@@ -32,11 +32,9 @@ class _TrackingState extends State<TrackingActivity>
   LatLng init_pos;
   List<LatLng> points;
   GoogleMapController mapController;
-  StreamSubscription<AccelerometerEvent> accelStream;
+  StreamSubscription<PedestrianStatus> pedometerStream;
+  bool moving = false;
   double velocity = 0;
-  double xaxis =
-      0; //we disregard z axis because it includes gravity and doesnt matter for the most part
-  double yaxis = 0;
   bool submitted = false;
   bool picturemode = false;
   bool expanded = false;
@@ -393,9 +391,12 @@ class _TrackingState extends State<TrackingActivity>
           mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
       }
     });
-    accelStream = accelerometerEvents.listen((event) {
-      //TODO: what the hell do i do with this
-    });
+    try {
+      pedometerStream = Pedometer.pedestrianStatusStream.listen((event) {
+        if (event.status=="stopped" && moving==true){moving=false;}
+        if (event.status=="walking" && moving==false){moving=true;}
+      });
+    }catch(e){}
   }
 
   submit() async {
@@ -403,7 +404,7 @@ class _TrackingState extends State<TrackingActivity>
     if (submitted) return;
     submitted = true;
     positionStream.cancel();
-    accelStream.cancel();
+    pedometerStream.cancel();
     course.finalize();
     course.name = namecontrol.text.trim();
     course.isprivate= isPrivate;
@@ -420,8 +421,8 @@ class _TrackingState extends State<TrackingActivity>
     if (positionStream != null) {
       positionStream.cancel();
     }
-    if (accelStream != null) {
-      accelStream.cancel();
+    if (pedometerStream != null) {
+      pedometerStream.cancel();
     }
     super.dispose();
   }
