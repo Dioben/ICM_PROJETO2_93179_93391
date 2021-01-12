@@ -14,7 +14,7 @@ import 'package:track_keeper/widgets/track-info.dart';
 
 const double CAMERA_ZOOM = 15;
 const double CAMERA_TILT = 0;
-const double CAMERA_BEARING = 30;
+const double CAMERA_BEARING = 0;
 
 class TrackingActivity extends StatefulWidget {
   const TrackingActivity({Key key}) : super(key: key);
@@ -46,23 +46,13 @@ class _TrackingState extends State<TrackingActivity>
   AnimationController animationController;
   Animation<double> slideAnimation;
 
-  _TrackingState() {
-    _markers = Set();
-    _polylines = Set();
-    points = [];
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((value) {
-      init_pos = LatLng(value.latitude, value.longitude);
-      setState(() {});
-      if (mapController != null) {
-        mapController..animateCamera(CameraUpdate.newLatLng(init_pos));
-      }
-    });
-  }
-
   @override
   void initState() {
     super.initState();
+
+    _markers = Set();
+    _polylines = Set();
+    points = [];
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 100), vsync: this);
@@ -242,8 +232,8 @@ class _TrackingState extends State<TrackingActivity>
             alignment: Alignment(0.0, -1.0),
             heightFactor: 0.8,
             child: GoogleMap(
+              mapToolbarEnabled: false,
               myLocationButtonEnabled: true,
-              compassEnabled: true,
               tiltGesturesEnabled: false,
               markers: _markers,
               polylines: _polylines,
@@ -509,11 +499,13 @@ class _TrackingState extends State<TrackingActivity>
   }
 
   void onMapCreated(GoogleMapController controller) {
-    if (init_pos != null) {
-      controller.animateCamera(CameraUpdate.newLatLng(init_pos));
-      mapController = controller;
-      print("controller assigned");
-    }
+    mapController = controller;
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((value) {
+      init_pos = LatLng(value.latitude, value.longitude);
+      mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
+      setState(() {});
+    });
   }
 
   void takePicture() async {
@@ -532,6 +524,13 @@ class _TrackingState extends State<TrackingActivity>
       }
     } catch (e) {
       print(e);
+    }
+  }
+
+  @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
     }
   }
 }
