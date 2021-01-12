@@ -7,14 +7,14 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:sensors/sensors.dart';
+import 'package:pedometer/pedometer.dart';
 import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
+import 'package:track_keeper/datamodel/courseComp.dart';
 import 'package:track_keeper/widgets/track-info.dart';
+import 'package:track_keeper/widgets/tracking.dart';
 
-const double CAMERA_ZOOM = 15;
-const double CAMERA_TILT = 0;
-const double CAMERA_BEARING = 30;
+
 
 class FollowingActivity extends StatefulWidget {
   Course original;
@@ -30,14 +30,14 @@ class _FollowingState extends State<FollowingActivity>
   Set<Marker> _markers;
   Set<Polyline> _polylines;
   Course course;
+  courseComp updater;
   LatLng init_pos;
   List<LatLng> points;
+  List<LatLng> ogpoints;
   GoogleMapController mapController;
-  StreamSubscription<AccelerometerEvent> accelStream;
   double velocity = 0;
-  double xaxis =
-  0; //we disregard z axis because it includes gravity and doesnt matter for the most part
-  double yaxis = 0;
+  StreamSubscription<PedestrianStatus> pedometerStream;
+  bool moving = false;
   bool submitted = false;
   bool picturemode = false;
   bool expanded = false;
@@ -46,10 +46,11 @@ class _FollowingState extends State<FollowingActivity>
   int steps_until_tracking =5;
   TextEditingController namecontrol = TextEditingController();
   final ImagePicker picker = ImagePicker();
-  _TrackingState() {
+  _FollowingState() {
     _markers = Set();
     _polylines = Set();
     points = [];
+    ogpoints = [];
     Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
         .then((value) {
       init_pos = LatLng(value.latitude, value.longitude);
@@ -66,7 +67,14 @@ class _FollowingState extends State<FollowingActivity>
   @override
   void initState() {
     super.initState();
-    //TODO: look into drawing the original course here
+    _markers.add(Marker(icon:BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        markerId: MarkerId('Original Start'),
+        infoWindow: InfoWindow(title: "Original Start"),
+        position: widget.original.nodes.first.toLatLng()));
+    _markers.add(Marker(icon:BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
+        markerId: MarkerId('Original End'),
+        infoWindow: InfoWindow(title: "Original End"),
+        position: widget.original.nodes.last.toLatLng()));
     animationController = AnimationController(
         duration: const Duration(milliseconds: 100), vsync: this);
     slideAnimation =
@@ -74,6 +82,10 @@ class _FollowingState extends State<FollowingActivity>
 
     animationController.addListener(() {
       setState(() {});
+    });
+    widget.original.unwindCourse().listen((event) {ogpoints.add(event);
+                                                    _polylines.add(Polyline(polylineId: PolylineId("original track"),visible: true,points: ogpoints,color: Colors.lightBlue));
+                                                    setState(() {});
     });
   }
 
@@ -348,9 +360,8 @@ class _FollowingState extends State<FollowingActivity>
   }
 
   startRecording() async {
-    //TODO: DESIGN COMPARER CLASS, CREATE AND USE IT HERE
-    //if (mapController==null){return;}
-    course = Course.original();
+    course = Course.copy(widget.original);
+    updater = courseComp(widget.original,course);
     setState(() {
       recording = true;
     });
@@ -377,8 +388,7 @@ class _FollowingState extends State<FollowingActivity>
       if (steps_until_tracking>0){steps_until_tracking--;return;}
 
       init_pos = LatLng(position.latitude, position.longitude);
-      CourseNode node = CourseNode.followUp(position, course.nodes.last);
-      course.appendNode(node);
+      updater.appendNode(position);
       points.add(init_pos);
       _polylines.add(Polyline(
           polylineId: PolylineId('our track'),
@@ -395,17 +405,20 @@ class _FollowingState extends State<FollowingActivity>
           mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
       }
     });
-    accelStream = accelerometerEvents.listen((event) {
-      //TODO: what the hell do i do with this
-    });
-  }
+    try {
+      pedometerStream = Pedometer.pedestrianStatusStream.listen((event) {
+        if (event.status=="stopped" && moving==true){moving=false;}
+        if (event.status=="walking" && moving==false){moving=true;}
+        });
+    }catch(e){}
+    }
 
   submit() async {
     //cancel all streams,submit course,view it
     if (submitted) return;
     submitted = true;
     positionStream.cancel();
-    accelStream.cancel();
+    pedometerStream.cancel();
     course.finalize();
     course.name = namecontrol.text.trim();
     course.isprivate= isPrivate;
@@ -422,8 +435,8 @@ class _FollowingState extends State<FollowingActivity>
     if (positionStream != null) {
       positionStream.cancel();
     }
-    if (accelStream != null) {
-      accelStream.cancel();
+    if (pedometerStream != null) {
+      pedometerStream.cancel();
     }
     super.dispose();
   }
