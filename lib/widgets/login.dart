@@ -36,15 +36,16 @@ class LoginState extends State<LoginMenu> {
                   Text(
                     "Track Keeper",
                     style: TextStyle(
-                        fontSize: 35,
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).accentColor,
-                        shadows: [
-                          Shadow(
-                              color: Colors.black45,
-                              blurRadius: 1,
-                              offset: Offset(1, 1.5))
-                        ]),
+                      fontSize: 35,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).accentColor,
+                      shadows: [
+                        Shadow(
+                            color: Colors.black45,
+                            blurRadius: 1,
+                            offset: Offset(1, 1.5))
+                      ]
+                    ),
                   ),
                   Container(
                     margin: EdgeInsets.fromLTRB(0, 50, 0, 0),

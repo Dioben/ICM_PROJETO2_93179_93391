@@ -13,66 +13,136 @@ import 'package:track_keeper/widgets/track-list.dart';
 import 'package:track_keeper/widgets/tracking.dart';
 import 'package:track_keeper/widgets/user-info.dart';
 
-class MainMenu extends StatelessWidget{
+class MainMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-
-      body:Padding(//maybe replace with column/expanded
-        padding: const EdgeInsets.symmetric(vertical: 150,),
-
-        child: Row(
-          children: [
-            Spacer(flex: 2,),
-            Expanded(
-              flex: 6,
-              child: Center(
-                child: Column(children: [
-                  
-                  Expanded(
-                    flex:4,
-                    child: Stack(
-                    children: [ Text("Track Keeper",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,foreground: Paint()..style=PaintingStyle.stroke..strokeWidth=3..color=Colors.black),),
-                      Text("Track Keeper",style: TextStyle(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.green),),],
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        child: FractionallySizedBox(
+          widthFactor: 0.6,
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(
+                "Track Keeper",
+                style: TextStyle(
+                  fontSize: 35,
+                  fontWeight: FontWeight.bold,
+                  color: Theme.of(context).accentColor,
+                  shadows: [
+                    Shadow(
+                        color: Colors.black45,
+                        blurRadius: 1,
+                        offset: Offset(1, 1.5))
+                  ]
                 ),
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 50, 0, 0),
+                width: 200,
+                height: 45,
+                child: ElevatedButton(
+                  child: Text(
+                    "Free play",
+                    style: TextStyle(fontSize: 16),
                   ),
-                  Spacer(flex:2),
-                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Free Play"),onPressed: ()=>freePlay(context)))),
-                  Spacer(flex:2),
-                  Expanded(flex:5,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("Tracks"),onPressed: ()=>viewTracks(context),))),
-                  Spacer(flex:2),
-                  Expanded(flex:5 ,child: SizedBox(width:double.infinity,child: ElevatedButton(child: Text("User Stats"),onPressed:()=> userInfo(context),))),
-                  Spacer(flex:2),
-                  Expanded(flex:5,child: Row(mainAxisAlignment:MainAxisAlignment.center,children: [Expanded(flex:8,child: SizedBox(height:double.infinity,child: ElevatedButton(child: Text("Logout"),onPressed: ()=>toLogin(context),))),Spacer(flex:1),Expanded(flex:8,child: SizedBox(height: double.infinity,child: ElevatedButton(child: Text("Settings"),onPressed: ()=>viewSettings(context),)))],)),
-
-                ],
-
+                  onPressed: () => freePlay(context),
+                )
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                width: 200,
+                height: 45,
+                child: ElevatedButton(
+                  child: Text(
+                    "Tracks",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  onPressed: () => viewTracks(context),
+                )
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                width: 200,
+                height: 45,
+                child: ElevatedButton(
+                  child: Text(
+                    "User info",
+                    style: TextStyle(fontSize: 16),
+                  ),
+                  onPressed: () => userInfo(context),
+                )
+              ),
+              Container(
+                margin: EdgeInsets.fromLTRB(0, 10, 0, 0),
+                width: 200,
+                height: 45,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Container(
+                      width: 97,
+                      height: 45,
+                      child: ElevatedButton(
+                        child: Text(
+                          "Logout",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        onPressed: () => toLogin(context),
+                      )
+                    ),
+                    Container(
+                      width: 97,
+                      height: 45,
+                      child: ElevatedButton(
+                        child: Text(
+                          "Settings",
+                          style: TextStyle(fontSize: 16),
+                        ),
+                        onPressed: () => viewSettings(context),
+                      )
+                    ),
+                  ],
                 ),
-    ),
-            ),
-            Spacer(flex: 2,),
-          ],
+              )
+            ],
+
+          ),
         ),
       ),
     );
   }
 
-  freePlay(context){
-    Navigator.push(context,MaterialPageRoute(builder: (context) => TrackingActivity()));
+  freePlay(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => TrackingActivity()));
   }
-  userInfo(context){
-    Navigator.push(context,MaterialPageRoute(builder: (context) => UserStats()));
+
+  userInfo(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => UserStats()));
   }
-  viewTracks(context){
-    Navigator.push(context,MaterialPageRoute(builder: (context) => ViewTrackList()));
+
+  viewTracks(context) {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => ViewTrackList()));
   }
-  viewSettings(context) async{
+
+  viewSettings(context) async {
     //Navigator.push(context,MaterialPageRoute(builder: (context) => SettingsMenu()));
-    Stream<Course> courses = FirebaseApiClient.instance.getNearbyRecent(LatLng(40.6405, -8.6538), 30);
-    await for (Course val in courses){print(val.getFormattedTimestamp());}
+    Stream<Course> courses = FirebaseApiClient.instance
+        .getNearbyRecent(LatLng(40.6405, -8.6538), 30);
+    await for (Course val in courses) {
+      print(val.getFormattedTimestamp());
+    }
   }
+
   toLogin(context) async {
     await FirebaseAuth.instance.signOut();
-    Navigator.pushReplacement(context,MaterialPageRoute(builder: (context) => LoginMenu()));
+    Navigator.pushReplacement(
+        context, MaterialPageRoute(builder: (context) => LoginMenu()));
   }
 }
