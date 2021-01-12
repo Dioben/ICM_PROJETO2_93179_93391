@@ -58,7 +58,8 @@ class ViewListState extends State<ViewTrackList> {
                   border: Border.all(color: Theme.of(context).primaryColor)
                 ),
                 child: new ListView.builder(
-                  itemExtent: 175,
+                  // itemExtent: 175,
+                  itemExtent: 135,
                   scrollDirection: Axis.vertical,
                   shrinkWrap: true,
                   itemCount: courses.length,
@@ -77,8 +78,8 @@ class ViewListState extends State<ViewTrackList> {
                             TrackItemField(title: "Runner name:", value: courses[index].user),
                             TrackItemField(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
                             TrackItemField(title: "Length:", value: courses[index].formattedTrackLength()),
-                            TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
-                            TrackItemField(title: "Rating:", value: courses[index].rating.toString()),
+                            // TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
+                            // TrackItemField(title: "Rating:", value: courses[index].rating.toString()),
                             TrackItemField(title: "Distance away:", value: (() {
                               if (currLon != null && currLat != null) return courses[index].formattedDistance(currLat, currLon);
                               else return "Unknown";
