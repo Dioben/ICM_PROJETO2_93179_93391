@@ -142,32 +142,56 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                 },
               ),
             ),
-            TrackItemField(title: "Track name:", value: widget.course.name),
-            TrackItemField(title: "Runner name:", value: widget.course.user),
+            // TrackItemField(
+            //   title: "Track name:",
+            //   value: widget.course.name,
+            //   icon:
+            // ),
             TrackItemField(
-                title: "Date uploaded:",
-                value: widget.course.getFormattedTimestamp()),
+              title: "Runner name:",
+              value: widget.course.user,
+              icon: Icons.person  
+            ),
             TrackItemField(
-                title: "Length:",
-                value: widget.course.formattedTrackLength()),
+              title: "Date uploaded:",
+              value: widget.course.getFormattedTimestamp(),
+              icon: Icons.query_builder_rounded
+            ),
             TrackItemField(
-                title: "Runtime:", value: widget.course.formattedRuntime()),
+              title: "Length:",
+              value: widget.course.formattedTrackLength(),
+              icon: Icons.show_chart_rounded
+            ),
             TrackItemField(
-                title: "Rating:", value: widget.course.rating.toString()),
+              title: "Runtime:",
+              value: widget.course.formattedRuntime(),
+              icon: Icons.timer_rounded,
+            ),
             TrackItemField(
-                title: "Distance away:",
-                value: (() {
-                  if (currLon != null && currLat != null)
-                    return widget.course.formattedDistance(currLat, currLon);
-                  else
-                    return "Unknown";
-                })()),
+              title: "Rating:",
+              value: widget.course.rating.toString(),
+              icon: Icons.star_border_rounded
+            ),
             TrackItemField(
-                title: "Maximum speed:",
-                value: widget.course.formattedMaxSpeed()),
+              title: "Distance away:",
+              value: (() {
+                if (currLon != null && currLat != null)
+                  return widget.course.formattedDistance(currLat, currLon);
+                else
+                  return "Unknown";
+              })(),
+              icon: Icons.location_on_rounded
+            ),
             TrackItemField(
-                title: "Average speed:",
-                value: widget.course.formattedAvgSpeed()),
+              title: "Maximum speed:",
+              value: widget.course.formattedMaxSpeed(),
+              icon: Icons.directions_run_rounded
+            ),
+            TrackItemField(
+              title: "Average speed:",
+              value: widget.course.formattedAvgSpeed(),
+              icon: Icons.directions_walk_rounded
+            ),
             courses.length == 0 ? Container(height: 10) : Column(
               children: [
                 Container(
@@ -295,10 +319,11 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
 }
 
 class TrackItemField extends StatefulWidget {
-  TrackItemField({Key key, @required this.title, @required this.value})
+  TrackItemField({Key key, @required this.title, @required this.value, @required this.icon})
       : super(key: key);
   final String title;
   final String value;
+  final IconData icon;
 
   @override
   _TrackItemFieldState createState() => new _TrackItemFieldState();
@@ -316,9 +341,13 @@ class _TrackItemFieldState extends State<TrackItemField> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.title,
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Container(child: Icon(widget.icon, size: 19,), margin: EdgeInsets.fromLTRB(0,0,2,0),),
+                    Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                  ],
+                ),
                 Text(widget.value, style: TextStyle(fontSize: 17)),
               ],
             )),
