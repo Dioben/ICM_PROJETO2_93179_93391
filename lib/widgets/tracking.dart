@@ -106,7 +106,7 @@ class _TrackingState extends State<TrackingActivity>
                   message: "Submit",
                   child: RawMaterialButton(
                     elevation: 2.0,
-                    fillColor: !picturemode ? Colors.redAccent[700] : Colors.red[900],
+                    fillColor: !picturemode ? Colors.redAccent[700] : Colors.red[400],
                     padding: EdgeInsets.all(8.0),
                     shape: CircleBorder(),
                     child: Icon(Icons.stop),

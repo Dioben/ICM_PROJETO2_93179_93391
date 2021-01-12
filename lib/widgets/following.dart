@@ -37,7 +37,7 @@ class _FollowingState extends State<FollowingActivity>
   GoogleMapController mapController;
   double velocity = 0;
   StreamSubscription<PedestrianStatus> pedometerStream;
-  bool moving = false;
+  bool moving;
   bool submitted = false;
   bool picturemode = false;
   bool expanded = false;
@@ -46,27 +46,18 @@ class _FollowingState extends State<FollowingActivity>
   int steps_until_tracking =5;
   TextEditingController namecontrol = TextEditingController();
   final ImagePicker picker = ImagePicker();
-  _FollowingState() {
-    _markers = Set();
-    _polylines = Set();
-    points = [];
-    ogpoints = [];
-    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
-        .then((value) {
-      init_pos = LatLng(value.latitude, value.longitude);
-      setState(() {});
-      if (mapController != null) {
-        mapController..animateCamera(CameraUpdate.newLatLng(init_pos));
-      }
-    });
-  }
-
   AnimationController animationController;
   Animation<double> slideAnimation;
 
   @override
   void initState() {
     super.initState();
+
+    _markers = Set();
+    _polylines = Set();
+    points = [];
+    ogpoints = [];
+
     _markers.add(Marker(icon:BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueAzure),
         markerId: MarkerId('Original Start'),
         infoWindow: InfoWindow(title: "Original Start"),
@@ -106,7 +97,7 @@ class _FollowingState extends State<FollowingActivity>
           bearing: CAMERA_BEARING);
     }
 
-
+    
     return Scaffold(
       resizeToAvoidBottomInset: false,
       appBar: AppBar(
@@ -131,119 +122,120 @@ class _FollowingState extends State<FollowingActivity>
                 Tooltip(
                   message: "Submit",
                   child: RawMaterialButton(
-                    onPressed: () {
-                      return showDialog(
-                          context: context,
-                          builder: (context) {
-                            return StatefulBuilder(
-                                builder: (context, setState) {
-                                  return AlertDialog(
-                                    title: Text("Submit your track:"),
-                                    content: SingleChildScrollView(
-                                      child: Container(
-                                        margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                        height: 205,
-                                        child: Column(
-                                          mainAxisAlignment: MainAxisAlignment.start,
-                                          children: [
-                                            TextField(
-                                              controller: namecontrol,
-                                              decoration: InputDecoration(
-                                                labelText: "Track name:",
-                                                border: OutlineInputBorder(
-                                                    borderRadius: BorderRadius.circular(10),
-                                                    borderSide: BorderSide()
-                                                ),
-                                              ),
-                                              style: TextStyle(
-                                                  fontSize: 18
-                                              ),
-                                            ),
-                                            Container(
-                                              padding: EdgeInsets.fromLTRB(0, 3, 0, 0),
-                                              child: Row(
-                                                mainAxisAlignment: MainAxisAlignment.center,
-                                                children: [
-                                                  RaisedButton(
-                                                    color: isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
-                                                    onPressed: () => setState(() => isPrivate = true),
-                                                    textColor: Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.only(
-                                                          topLeft: Radius.circular(7),
-                                                          bottomLeft: Radius.circular(7),
-                                                        )
-                                                    ),
-                                                    padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                                                    child: Text("Private",
-                                                      style: TextStyle(fontSize: 18),
-                                                    ),
-                                                  ),
-                                                  RaisedButton(
-                                                    color: !isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
-                                                    onPressed: () => setState(() => isPrivate = false),
-                                                    textColor: Colors.white,
-                                                    shape: RoundedRectangleBorder(
-                                                        borderRadius: BorderRadius.only(
-                                                          topRight: Radius.circular(7),
-                                                          bottomRight: Radius.circular(7),
-                                                        )
-                                                    ),
-                                                    padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                                                    child: Text("Public",
-                                                      style: TextStyle(fontSize: 18),
-                                                    ),
-                                                  )
-                                                ],
-                                              ),
-                                            ),
-                                            CheckboxListTile(
-                                              dense: true,
-                                              value: isAnonymous,
-                                              onChanged: (newValue) {
-                                                setState(() {
-                                                  isAnonymous = newValue;
-                                                });
-                                              },
-                                              controlAffinity: ListTileControlAffinity.leading,
-                                              contentPadding: EdgeInsets.all(0),
-                                              activeColor: Theme.of(context).accentColor,
-                                              title: Text("Anonymous",
-                                                style: TextStyle(fontSize: 18),
-                                              ),
-                                            ),
-                                            Container(
-                                              width: double.infinity,
-                                              alignment: Alignment.centerRight,
-                                              child: RaisedButton(
-                                                onPressed: () {
-                                                  Navigator.of(context).pop();
-                                                  submit();
-                                                },
-                                                color: Theme.of(context).accentColor,
-                                                child: Text("Confirm",
-                                                  style: TextStyle(
-                                                      fontSize: 18,
-                                                      color: Colors.white
-                                                  ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ),
-                                  );
-                                }
-                            );
-                          }
-                      );
-                    },
                     elevation: 2.0,
-                    fillColor: Colors.redAccent[700],
+                    fillColor: !picturemode ? Colors.redAccent[700] : Colors.red[400],
                     padding: EdgeInsets.all(8.0),
                     shape: CircleBorder(),
                     child: Icon(Icons.stop),
+                    onPressed: () {
+                      if (!picturemode)
+                        return showDialog(
+                          context: context,
+                          builder: (context) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return AlertDialog(
+                                  title: Text("Submit your track:"), 
+                                  content: SingleChildScrollView(
+                                    child: Container(
+                                      margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
+                                      height: 205,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          TextField(
+                                            controller: namecontrol,
+                                            decoration: InputDecoration(
+                                              labelText: "Track name:",
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                                borderSide: BorderSide()
+                                              ),
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 18
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.fromLTRB(0, 3, 0, 0),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                RaisedButton(
+                                                  color: isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
+                                                  onPressed: () => setState(() => isPrivate = true),
+                                                  textColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(7),
+                                                      bottomLeft: Radius.circular(7),
+                                                    )
+                                                  ),
+                                                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                                  child: Text("Private",
+                                                    style: TextStyle(fontSize: 18),
+                                                  ),
+                                                ),
+                                                RaisedButton(
+                                                  color: !isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
+                                                  onPressed: () => setState(() => isPrivate = false),
+                                                  textColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topRight: Radius.circular(7),
+                                                      bottomRight: Radius.circular(7),
+                                                    )
+                                                  ),
+                                                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                                  child: Text("Public",
+                                                    style: TextStyle(fontSize: 18),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          CheckboxListTile(
+                                            dense: true,
+                                            value: isAnonymous,
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                isAnonymous = newValue;
+                                              });
+                                            },
+                                            controlAffinity: ListTileControlAffinity.leading,
+                                            contentPadding: EdgeInsets.all(0),
+                                            activeColor: Theme.of(context).accentColor,
+                                            title: Text("Anonymous",
+                                                style: TextStyle(fontSize: 18),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: double.infinity,
+                                            alignment: Alignment.centerRight,
+                                            child: RaisedButton( 
+                                              onPressed: () { 
+                                                Navigator.of(context).pop(); 
+                                                submit();
+                                              },
+                                              color: Theme.of(context).accentColor,
+                                              child: Text("Confirm",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.white
+                                                  ),
+                                              ),
+                                            ),
+                                          ), 
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            );
+                          }
+                        );
+                    },
                   ),
                 );
             })(),
@@ -257,8 +249,8 @@ class _FollowingState extends State<FollowingActivity>
             alignment: Alignment(0.0, -1.0),
             heightFactor: 0.8,
             child: GoogleMap(
+              mapToolbarEnabled: false,
               myLocationButtonEnabled: true,
-              compassEnabled: true,
               tiltGesturesEnabled: false,
               markers: _markers,
               polylines: _polylines,
@@ -272,78 +264,187 @@ class _FollowingState extends State<FollowingActivity>
             alignment: Alignment(0.0, slideAnimation.value),
             heightFactor: 0.59,
             child: Stack(
-                fit: StackFit.expand,
-                children: [
-                  Container(
-                    padding: EdgeInsets.fromLTRB(0.0, 74.0, 0.0, 0.0),
-                    child: SizedBox(
-                      child: DecoratedBox(
-                        decoration: BoxDecoration(color: Colors.white),
-                      ),
+              fit: StackFit.expand,
+              children: [
+                Container(
+                  padding: EdgeInsets.fromLTRB(0.0, 74.0, 0.0, 0.0),
+                  child: SizedBox(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(color: Colors.white),
                     ),
                   ),
-                  Container(
-                      padding: EdgeInsets.fromLTRB(0.0, 80.0, 0.0, 0.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          TrackItemField(title: "Length:", value: (course==null)?"":course.formattedTrackLength(), rightBorder: 80,),
-                          TrackItemField(title: "Current speed:", value: (course==null)?"":velocity.toStringAsFixed(2)+" km/h",),
-                          TrackItemField(title: "Runtime:", value: (course==null)?"":course.formattedRuntime(),),
-                          TrackItemField(title: "Maximum speed:", value: (course==null)?"":course.formattedMaxSpeed(),),
-                          TrackItemField(title: "Average speed:", value: (course==null)?"":course.formattedAvgSpeed(),),
-                        ],
-                      )
-
-                  ),
-                  Align(
-                    alignment: Alignment(0.95, -1.0),
-                    child: SizedBox(
-                        width: 60,
-                        height: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            (() {
-                              if (recording) return
-                                Tooltip(
-                                  message: "Take a photo",
-                                  child: RawMaterialButton(
-                                    onPressed: () => takePicture(),
-                                    elevation: 2.0,
-                                    fillColor: Theme.of(context).accentColor,
-                                    padding: EdgeInsets.all(8.0),
-                                    shape: CircleBorder(),
-                                    child: Icon(Icons.camera_alt),
-                                  ),
-                                );
-                              else return
-                                Container();
-                            })(),
+                ),
+                Container(
+                  padding: EdgeInsets.fromLTRB(0.0, 80.0, 0.0, 0.0),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: [
+                      TrackItemField(title: "Length:", value: (course==null)?"":course.formattedTrackLength(), rightBorder: 80,),
+                      TrackItemField(title: "Current speed:", value: (course==null)?"":velocity.toStringAsFixed(2)+" km/h",),
+                      TrackItemField(title: "Runtime:", value: (course==null)?"":course.formattedRuntime(),),
+                      TrackItemField(title: "Maximum speed:", value: (course==null)?"":course.formattedMaxSpeed(),),
+                      TrackItemField(title: "Average speed:", value: (course==null)?"":course.formattedAvgSpeed(),),
+                    ],
+                  )
+                  
+                ),
+                Align(
+                  alignment: Alignment(0.95, -1.0),
+                  child: SizedBox(
+                    width: 60,
+                    height: 100,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        (() {
+                          if (recording) return
                             Tooltip(
-                              message: (() {
-                                if (!expanded) return "Expand";
-                                else return "Contract";
-                              })(),
+                              message: "Take a photo",
                               child: RawMaterialButton(
-                                onPressed: () => expandAndContractInfo(),
+                                onPressed: () => takePicture(),
                                 elevation: 2.0,
                                 fillColor: Theme.of(context).accentColor,
-                                padding: EdgeInsets.all(4.0),
+                                padding: EdgeInsets.all(8.0),
                                 shape: CircleBorder(),
-                                child: (() {
-                                  if (!expanded) return Icon(Icons.arrow_drop_up, size: 40);
-                                  else return Icon(Icons.arrow_drop_down, size: 40);
-                                })(),
+                                child: Icon(Icons.camera_alt),
                               ),
-                            ),
-                          ],
-                        )
-                    ),
+                            );
+                          else return
+                            Container();
+                        })(),
+                        Tooltip(
+                          message: (() {
+                            if (!expanded) return "Expand";
+                            else return "Contract";
+                          })(),
+                          child: RawMaterialButton(
+                            onPressed: () => expandAndContractInfo(),
+                            elevation: 2.0,
+                            fillColor: Theme.of(context).accentColor,
+                            padding: EdgeInsets.all(4.0),
+                            shape: CircleBorder(),
+                            child: (() {
+                            if (!expanded) return Icon(Icons.arrow_drop_up, size: 40);
+                            else return Icon(Icons.arrow_drop_down, size: 40);
+                            })(),
+                          ),
+                        ),
+                      ],
+                    )
                   ),
-                ]
+                ),
+              ]
             ),
           ),
+          Container(
+            margin: EdgeInsets.fromLTRB(10, 60, MediaQuery.of(context).size.width - 50, MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom -  AppBar().preferredSize.height - 100 ),
+            padding: EdgeInsets.zero,
+            child: () {
+              if (recording)
+                if (moving != null)
+                  if (moving)
+                    return Tooltip(
+                      message: "Moving",
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: 1,
+                            top: 1,
+                            child: Icon(Icons.directions_walk_rounded,
+                              size: 40,
+                            ),
+                          ),
+                          Icon(Icons.directions_walk_rounded,
+                            size: 40,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ]
+                      )
+                    );
+                  else
+                    return Tooltip(
+                      message: "Stopped",
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: 1,
+                            top: 1,
+                            child: Icon(Icons.accessibility_rounded,
+                              size: 40,
+                            ),
+                          ),
+                          Icon(Icons.accessibility_rounded,
+                            size: 40,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ]
+                      )
+                    );
+                else
+                  return Tooltip(
+                    message: "Step detection not available on this device",
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 1,
+                          top: 1,
+                          child: Icon(Icons.do_not_step_rounded,
+                            size: 40,
+                          ),
+                        ),
+                        Icon(Icons.do_not_step_rounded,
+                          size: 40,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ]
+                    )
+                  );
+            }(),
+          ),
+          picturemode ? Container(
+            color: Colors.grey[700].withOpacity(0.5),
+            child: Container(
+              margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width/2 - 100,
+                right: MediaQuery.of(context).size.width/2 - 100,
+                top: (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom -  AppBar().preferredSize.height)/2 - 160,
+                bottom: (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom -  AppBar().preferredSize.height)/2 - 40,
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CircularProgressIndicator(
+                    strokeWidth: 10,
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                  ),
+                  CircularProgressIndicator(
+                    strokeWidth: 8,
+                  ),
+                  FractionallySizedBox(
+                    heightFactor: 1,
+                    widthFactor: 1.5,
+                    child: Align(
+                      alignment: Alignment(0, 1.5),
+                      child: Text(
+                        "Uploading picture. Please wait.",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[300],
+                          shadows: [
+                            Shadow(
+                                color: Colors.black45,
+                                blurRadius: 1,
+                                offset: Offset(1, 1.5))
+                          ]
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ) : FractionallySizedBox(heightFactor: 0, widthFactor: 0),
         ],
       ),
     );
@@ -407,11 +508,27 @@ class _FollowingState extends State<FollowingActivity>
     });
     try {
       pedometerStream = Pedometer.pedestrianStatusStream.listen((event) {
-        if (event.status=="stopped" && moving==true){moving=false;}
-        if (event.status=="walking" && moving==false){moving=true;}
-        });
-    }catch(e){}
+        if (moving == null)
+          moving = false;
+        if (event.status=="stopped" && moving==true){
+          setState(() {
+            moving=false; 
+          });
+        } else if (event.status=="walking" && moving==false){
+          setState(() {
+            moving=false; 
+          });
+        }
+      });
+      pedometerStream.onError((e) {
+        print(e);
+        moving = null;
+      });
+    } catch(e) {
+      print(e);
+      moving = null;
     }
+  }
 
   submit() async {
     //cancel all streams,submit course,view it
@@ -438,26 +555,30 @@ class _FollowingState extends State<FollowingActivity>
     if (pedometerStream != null) {
       pedometerStream.cancel();
     }
+    animationController.stop();
     super.dispose();
   }
 
   void onMapCreated(GoogleMapController controller) {
-    if (init_pos != null) {
-      controller.animateCamera(CameraUpdate.newLatLng(init_pos));
-      mapController = controller;
-      print("controller assigned");
-    }
+    mapController = controller;
+    Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high)
+        .then((value) {
+      init_pos = LatLng(value.latitude, value.longitude);
+      mapController.animateCamera(CameraUpdate.newLatLng(init_pos));
+      setState(() {});
+    });
   }
 
   void takePicture() async {
     print("takePicture");
     try {
-      picturemode = true;
+      setState(() {
+        picturemode = true;
+      });
       final PickedFile picture =
-      await picker.getImage(source: ImageSource.camera);
+          await picker.getImage(source: ImageSource.camera);
       File picfile = File(picture.path);
       print("got to path");
-      picturemode = false;
       String upstreamurl = await FirebaseApiClient.instance.postImage(picfile);
       if (upstreamurl != null) {
         print("got url $upstreamurl");
@@ -465,6 +586,16 @@ class _FollowingState extends State<FollowingActivity>
       }
     } catch (e) {
       print(e);
+    }
+    setState(() {
+      picturemode = false;
+    });
+  }
+
+  @override
+  void setState(fn) {
+    if(mounted) {
+      super.setState(fn);
     }
   }
 }
