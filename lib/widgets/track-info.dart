@@ -341,14 +341,14 @@ class _TrackItemFieldState extends State<TrackItemField> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
+                Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.start,
                   children: [
-                    Container(child: Icon(widget.icon, size: 19,), margin: EdgeInsets.fromLTRB(0,0,2,0),),
-                    Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                    Text(widget.value, style: TextStyle(fontSize: 17)),
+                    Container(child: Icon(widget.icon, size: 18,), margin: EdgeInsets.fromLTRB(2,0,0,0),),
                   ],
                 ),
-                Text(widget.value, style: TextStyle(fontSize: 17)),
               ],
             )),
         Container(
@@ -389,14 +389,14 @@ class _TrackItemFieldListState extends State<TrackItemFieldList> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
+              Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
               Row(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
-                  Container(child: Icon(widget.icon, size: 16,), margin: EdgeInsets.fromLTRB(0,0,2,0),),
-                  Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Text(widget.value , style: TextStyle(fontSize: 15)),
+                  Container(child: Icon(widget.icon, size: 16,), margin: EdgeInsets.fromLTRB(2,0,0,0),),
                 ],
               ),
-              Text(widget.value , style: TextStyle(fontSize: 15)),
             ],
           )
         ),

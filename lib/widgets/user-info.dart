@@ -18,13 +18,13 @@ class UserStats extends StatelessWidget{
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               children: [
-                UserItemField(title: "Name:", value: user.username,),
-                UserItemField(title: "Top Score:", value: user.top_rating.toString(),),
-                UserItemField(title: "Track Count:", value: user.coursecount.toString(),),
-                UserItemField(title: "Total Track Length:", value: user.formattedTrackLength(),),
-                UserItemField(title: "Total Runtime:", value: user.formattedRuntime(),),
-                UserItemField(title: "Max Speed:", value: user.formattedMaxSpeed(),),
-                UserItemField(title: "Average Speed:", value: user.formattedAvgSpeed(),),
+                UserItemField(title: "Name:", value: user.username, icon: Icons.person),
+                UserItemField(title: "Top Rating:", value: user.top_rating.toString(), icon: Icons.star_border_outlined),
+                UserItemField(title: "Track Count:", value: user.coursecount.toString(), icon: Icons.edit_road_rounded),
+                UserItemField(title: "Total Track Length:", value: user.formattedTrackLength(), icon: Icons.show_chart_rounded),
+                UserItemField(title: "Total Runtime:", value: user.formattedRuntime(), icon: Icons.timer_rounded),
+                UserItemField(title: "Max Speed:", value: user.formattedMaxSpeed(), icon: Icons.directions_run_rounded),
+                UserItemField(title: "Average Speed:", value: user.formattedAvgSpeed(), icon: Icons.directions_walk_rounded),
               ],
             )
 
@@ -35,10 +35,11 @@ class UserStats extends StatelessWidget{
 }
 
 class UserItemField extends StatefulWidget {
-  UserItemField({Key key, @required this.title, @required this.value})
+  UserItemField({Key key, @required this.title, @required this.value, @required this.icon})
       : super(key: key);
   final String title;
   final String value;
+  final IconData icon;
 
   @override
   _UserItemFieldState createState() => new _UserItemFieldState();
@@ -56,10 +57,14 @@ class _UserItemFieldState extends State<UserItemField> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.title,
-                    style:
-                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                Text(widget.value, style: TextStyle(fontSize: 17)),
+                Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  children: [
+                    Text(widget.value, style: TextStyle(fontSize: 17)),
+                    Container(child: Icon(widget.icon, size: 18,), margin: EdgeInsets.fromLTRB(2,0,0,0),),
+                  ],
+                ),
               ],
             )),
         Container(
