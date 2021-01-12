@@ -262,11 +262,11 @@ class _TrackingState extends State<TrackingActivity>
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
-                      TrackItemField(title: "Length:", value: (course==null)?"":course.formattedTrackLength(), rightBorder: 80,),
-                      TrackItemField(title: "Current speed:", value: (course==null)?"":velocity.toStringAsFixed(2)+" km/h",),
-                      TrackItemField(title: "Runtime:", value: (course==null)?"":course.formattedRuntime(),),
-                      TrackItemField(title: "Maximum speed:", value: (course==null)?"":course.formattedMaxSpeed(),),
-                      TrackItemField(title: "Average speed:", value: (course==null)?"":course.formattedAvgSpeed(),),
+                      TrackItemField(title: "Length:", value: (course==null)?"":course.formattedTrackLength(), rightBorder: 80, icon: Icons.show_chart_rounded),
+                      TrackItemField(title: "Current speed:", value: (course==null)?"":velocity.toStringAsFixed(2)+" km/h", icon: Icons.speed_rounded),
+                      TrackItemField(title: "Runtime:", value: (course==null)?"":course.formattedRuntime(), icon: Icons.timer_rounded),
+                      TrackItemField(title: "Maximum speed:", value: (course==null)?"":course.formattedMaxSpeed(), icon: Icons.directions_run_rounded),
+                      TrackItemField(title: "Average speed:", value: (course==null)?"":course.formattedAvgSpeed(), icon: Icons.directions_walk_rounded),
                     ],
                   )
                   
@@ -586,10 +586,11 @@ class _TrackingState extends State<TrackingActivity>
 
 
 class TrackItemField extends StatefulWidget {
-  TrackItemField({Key key, @required this.title, @required this.value, this.rightBorder}) : super(key: key);
+  TrackItemField({Key key, @required this.title, @required this.value, this.rightBorder, @required this.icon}) : super(key: key);
   final String title;
   final String value;
   final double rightBorder;
+  final IconData icon;
 
   @override
   _TrackItemFieldState createState() => new _TrackItemFieldState();
@@ -608,7 +609,13 @@ class _TrackItemFieldState extends State<TrackItemField> {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-              Text(widget.value , style: TextStyle(fontSize: 17)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(widget.value, style: TextStyle(fontSize: 17)),
+                  Container(child: Icon(widget.icon, size: 18,), margin: EdgeInsets.fromLTRB(2,0,0,0),),
+                ],
+              ),
             ],
           )
         ),
