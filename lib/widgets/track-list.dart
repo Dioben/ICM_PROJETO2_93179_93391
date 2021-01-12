@@ -107,6 +107,7 @@ class ViewListState extends State<ViewTrackList> {
   }
 
   void _onRefresh() async {
+    await getCurrentPosition();
     doQuery();
     _refreshController.refreshCompleted();
   }

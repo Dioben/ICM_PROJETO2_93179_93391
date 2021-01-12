@@ -10,6 +10,7 @@ import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/tracking.dart';
 import 'package:flutter_swiper/flutter_swiper.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 import 'following.dart';
 
@@ -34,6 +35,8 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
   GoogleMapController mapController;
   double currLat;
   double currLon;
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   void initState() {
@@ -58,7 +61,6 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
   }
 
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
       appBar: AppBar(
         title: Text(widget.course.name),
@@ -79,149 +81,162 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
           ),
         ],
       ),
-      body: ListView(
-        children: [
-          Container(
-            height: MediaQuery.of(context).size.height/2,
-            width: double.infinity,
-            margin: EdgeInsets.fromLTRB(20, 10 , 20, 10),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).primaryColor
-              )
-            ),
-            child: GoogleMap(
-              myLocationButtonEnabled: true,
-              compassEnabled: true,
-              tiltGesturesEnabled: false,
-              markers: _markers,
-              polylines: _polylines,
-              mapType: MapType.normal,
-              initialCameraPosition: initialCameraPosition,
-              onMapCreated: onMapCreated,
-              zoomControlsEnabled: false,
-              gestureRecognizers: {
-                Factory<OneSequenceGestureRecognizer>(
-                  () => EagerGestureRecognizer(),
-                ),
-              },
-            ),
-          ),
-          widget.course.pictures.length == 0 ? Container() : Container(
-            height: MediaQuery.of(context).size.height/1.5,
-            width: double.infinity,
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Theme.of(context).primaryColor
-              )
-            ),
-            child: Swiper(
-              itemCount: widget.course.pictures.length,
-              pagination: SwiperPagination(),
-              autoplay: true,
-              autoplayDelay: 10000,
-              loop: false,
-              itemBuilder: (BuildContext context, int index) {
-                return CachedNetworkImage(
-                  progressIndicatorBuilder: (context, url, downloadProgress) => 
-                    Container(
-                      margin: EdgeInsets.symmetric(
-                        vertical: (MediaQuery.of(context).size.height/1.5)/2 - 30,
-                        horizontal: (MediaQuery.of(context).size.width-40)/2 -30
-                      ),
-                      child: CircularProgressIndicator(value: downloadProgress.progress)
-                    ),
-                  errorWidget: (context, url, error) => Icon(Icons.error),
-                  fit: BoxFit.fitWidth,
-                  imageUrl: widget.course.pictures[index],
-                );
-              },
-            ),
-          ),
-          TrackItemField(title: "Track name:", value: widget.course.name),
-          TrackItemField(title: "Runner name:", value: widget.course.user),
-          TrackItemField(
-              title: "Date uploaded:",
-              value: widget.course.getFormattedTimestamp()),
-          TrackItemField(
-              title: "Length:",
-              value: widget.course.formattedTrackLength()),
-          TrackItemField(
-              title: "Runtime:", value: widget.course.formattedRuntime()),
-          TrackItemField(
-              title: "Rating:", value: widget.course.rating.toString()),
-          TrackItemField(
-              title: "Distance away:",
-              value: (() {
-                if (currLon != null && currLat != null)
-                  return widget.course.formattedDistance(currLat, currLon);
-                else
-                  return "Unknown";
-              })()),
-          TrackItemField(
-              title: "Maximum speed:",
-              value: widget.course.formattedMaxSpeed()),
-          TrackItemField(
-              title: "Average speed:",
-              value: widget.course.formattedAvgSpeed()),
-          courses.length == 0 ? Container(height: 10) : Column(
-            children: [
-              Container(
-                width: double.infinity,
-                margin: EdgeInsets.fromLTRB(20, 10 , 20, 0),
-                child: AppBar(
-                  title: Text("Runs made on the same course"),
-                  automaticallyImplyLeading: false,
+      body: SmartRefresher(
+        controller: _refreshController,
+        onRefresh: _onRefresh,
+        child: ListView(
+          children: [
+            Container(
+              height: MediaQuery.of(context).size.height/2,
+              width: double.infinity,
+              margin: EdgeInsets.fromLTRB(20, 10 , 20, 10),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).primaryColor
+                )
+              ),
+              child: AbsorbPointer(
+                absorbing: true,
+                child: GoogleMap(
+                  myLocationButtonEnabled: true,
+                  compassEnabled: true,
+                  tiltGesturesEnabled: false,
+                  markers: _markers,
+                  polylines: _polylines,
+                  mapType: MapType.normal,
+                  initialCameraPosition: initialCameraPosition,
+                  onMapCreated: onMapCreated,
+                  zoomControlsEnabled: false
                 ),
               ),
-              Container(
-                height: (() {
-                  double maxSize = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - AppBar().preferredSize.height*2 - 20;
-                  if (maxSize > 130.0 * courses.length)
-                    return 130.0 * courses.length;
-                  return maxSize;
-                })(),
-                width: double.infinity,
-                margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
-                decoration: BoxDecoration(
-                  border: Border.all(
-                    color: Theme.of(context).primaryColor
-                  )
-                ),
-                child: ListView.builder(
-                  physics: ClampingScrollPhysics(),
-                  itemExtent: 130,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: courses.length,
-                  itemBuilder: (context, index) =>
-                    InkWell(
-                      onTap: () => goToInfo(courses[index]),
-                      child: Ink(
-                        color: (() {
-                          if (index % 2 == 0) return Colors.grey[300];
-                          else return Colors.grey[200];
-                        })(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TrackItemFieldList(title: "Track name:", value: courses[index].name),
-                            TrackItemFieldList(title: "Runner name:", value: courses[index].user),
-                            TrackItemFieldList(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
-                            TrackItemFieldList(title: "Runtime:", value: courses[index].formattedRuntime()),
-                            TrackItemFieldList(title: "Rating:", value: courses[index].rating.toString()),
-                          ],
-                        )
+            ),
+            widget.course.pictures.length == 0 ? Container() : Container(
+              height: MediaQuery.of(context).size.height/1.5,
+              width: double.infinity,
+              margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+              decoration: BoxDecoration(
+                border: Border.all(
+                  color: Theme.of(context).primaryColor
+                )
+              ),
+              child: Swiper(
+                itemCount: widget.course.pictures.length,
+                pagination: SwiperPagination(),
+                autoplay: true,
+                autoplayDelay: 10000,
+                loop: false,
+                itemBuilder: (BuildContext context, int index) {
+                  return CachedNetworkImage(
+                    progressIndicatorBuilder: (context, url, downloadProgress) => 
+                      Container(
+                        margin: EdgeInsets.symmetric(
+                          vertical: (MediaQuery.of(context).size.height/1.5)/2 - 30,
+                          horizontal: (MediaQuery.of(context).size.width-40)/2 -30
+                        ),
+                        child: CircularProgressIndicator(value: downloadProgress.progress)
                       ),
-                    ),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
+                    fit: BoxFit.fitWidth,
+                    imageUrl: widget.course.pictures[index],
+                  );
+                },
+              ),
+            ),
+            TrackItemField(title: "Track name:", value: widget.course.name),
+            TrackItemField(title: "Runner name:", value: widget.course.user),
+            TrackItemField(
+                title: "Date uploaded:",
+                value: widget.course.getFormattedTimestamp()),
+            TrackItemField(
+                title: "Length:",
+                value: widget.course.formattedTrackLength()),
+            TrackItemField(
+                title: "Runtime:", value: widget.course.formattedRuntime()),
+            TrackItemField(
+                title: "Rating:", value: widget.course.rating.toString()),
+            TrackItemField(
+                title: "Distance away:",
+                value: (() {
+                  if (currLon != null && currLat != null)
+                    return widget.course.formattedDistance(currLat, currLon);
+                  else
+                    return "Unknown";
+                })()),
+            TrackItemField(
+                title: "Maximum speed:",
+                value: widget.course.formattedMaxSpeed()),
+            TrackItemField(
+                title: "Average speed:",
+                value: widget.course.formattedAvgSpeed()),
+            courses.length == 0 ? Container(height: 10) : Column(
+              children: [
+                Container(
+                  width: double.infinity,
+                  margin: EdgeInsets.fromLTRB(20, 10 , 20, 0),
+                  child: AppBar(
+                    title: Text("Runs made on the same course"),
+                    automaticallyImplyLeading: false,
                   ),
-              ),
-            ],
-          ),
-        ],
+                ),
+                Container(
+                  height: (() {
+                    double maxSize = MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom - AppBar().preferredSize.height*2 - 20;
+                    if (maxSize > 130.0 * courses.length)
+                      return 130.0 * courses.length;
+                    return maxSize;
+                  })(),
+                  width: double.infinity,
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  decoration: BoxDecoration(
+                    border: Border.all(
+                      color: Theme.of(context).primaryColor
+                    )
+                  ),
+                  child: ListView.builder(
+                    physics: ClampingScrollPhysics(),
+                    itemExtent: 130,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) =>
+                      InkWell(
+                        onTap: () => goToInfo(courses[index]),
+                        child: Ink(
+                          color: (() {
+                            if (index % 2 == 0) return Colors.grey[300];
+                            else return Colors.grey[200];
+                          })(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TrackItemFieldList(title: "Track name:", value: courses[index].name),
+                              TrackItemFieldList(title: "Runner name:", value: courses[index].user),
+                              TrackItemFieldList(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
+                              TrackItemFieldList(title: "Runtime:", value: courses[index].formattedRuntime()),
+                              TrackItemFieldList(title: "Rating:", value: courses[index].rating.toString()),
+                            ],
+                          )
+                        ),
+                      ),
+                    ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
+  }
+
+  void _onRefresh() async {
+    await getCurrentPosition();
+    courses = [];
+    updateStream =
+        FirebaseApiClient.instance.getOtherRuns(widget.course).listen((event) {
+      courses.add(event);
+      setState(() {});
+    });
+    _refreshController.refreshCompleted();
   }
 
   getCurrentPosition() async {
