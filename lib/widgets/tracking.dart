@@ -56,8 +56,7 @@ class _TrackingState extends State<TrackingActivity>
 
     animationController = AnimationController(
         duration: const Duration(milliseconds: 100), vsync: this);
-    slideAnimation =
-        Tween<double>(begin: 2.2, end: 1.0).animate(animationController);
+    slideAnimation = Tween<double>(begin: 2.2, end: 1.0).animate(animationController);
 
     animationController.addListener(() {
       setState(() {});
@@ -106,119 +105,120 @@ class _TrackingState extends State<TrackingActivity>
                 Tooltip(
                   message: "Submit",
                   child: RawMaterialButton(
-                    onPressed: () {
-                      return showDialog(
-                        context: context,
-                        builder: (context) {
-                          return StatefulBuilder(
-                            builder: (context, setState) {
-                              return AlertDialog(
-                                title: Text("Submit your track:"), 
-                                content: SingleChildScrollView(
-                                  child: Container(
-                                    margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                    height: 205,
-                                    child: Column(
-                                      mainAxisAlignment: MainAxisAlignment.start,
-                                      children: [
-                                        TextField(
-                                          controller: namecontrol,
-                                          decoration: InputDecoration(
-                                            labelText: "Track name:",
-                                            border: OutlineInputBorder(
-                                              borderRadius: BorderRadius.circular(10),
-                                              borderSide: BorderSide()
-                                            ),
-                                          ),
-                                          style: TextStyle(
-                                            fontSize: 18
-                                          ),
-                                        ),
-                                        Container(
-                                          padding: EdgeInsets.fromLTRB(0, 3, 0, 0),
-                                          child: Row(
-                                            mainAxisAlignment: MainAxisAlignment.center,
-                                            children: [
-                                              RaisedButton(
-                                                color: isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
-                                                onPressed: () => setState(() => isPrivate = true),
-                                                textColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.only(
-                                                    topLeft: Radius.circular(7),
-                                                    bottomLeft: Radius.circular(7),
-                                                  )
-                                                ),
-                                                padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                                                child: Text("Private",
-                                                  style: TextStyle(fontSize: 18),
-                                                ),
-                                              ),
-                                              RaisedButton(
-                                                color: !isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
-                                                onPressed: () => setState(() => isPrivate = false),
-                                                textColor: Colors.white,
-                                                shape: RoundedRectangleBorder(
-                                                  borderRadius: BorderRadius.only(
-                                                    topRight: Radius.circular(7),
-                                                    bottomRight: Radius.circular(7),
-                                                  )
-                                                ),
-                                                padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
-                                                child: Text("Public",
-                                                  style: TextStyle(fontSize: 18),
-                                                ),
-                                              )
-                                            ],
-                                          ),
-                                        ),
-                                        CheckboxListTile(
-                                          dense: true,
-                                          value: isAnonymous,
-                                          onChanged: (newValue) {
-                                            setState(() {
-                                              isAnonymous = newValue;
-                                            });
-                                          },
-                                          controlAffinity: ListTileControlAffinity.leading,
-                                          contentPadding: EdgeInsets.all(0),
-                                          activeColor: Theme.of(context).accentColor,
-                                          title: Text("Anonymous",
-                                              style: TextStyle(fontSize: 18),
-                                          ),
-                                        ),
-                                        Container(
-                                          width: double.infinity,
-                                          alignment: Alignment.centerRight,
-                                          child: RaisedButton( 
-                                            onPressed: () { 
-                                              Navigator.of(context).pop(); 
-                                              submit();
-                                            },
-                                            color: Theme.of(context).accentColor,
-                                            child: Text("Confirm",
-                                              style: TextStyle(
-                                                fontSize: 18,
-                                                color: Colors.white
-                                                ),
-                                            ),
-                                          ),
-                                        ), 
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              );
-                            }
-                          );
-                        }
-                      );
-                    },
                     elevation: 2.0,
-                    fillColor: Colors.redAccent[700],
+                    fillColor: !picturemode ? Colors.redAccent[700] : Colors.red[900],
                     padding: EdgeInsets.all(8.0),
                     shape: CircleBorder(),
                     child: Icon(Icons.stop),
+                    onPressed: () {
+                      if (!picturemode)
+                        return showDialog(
+                          context: context,
+                          builder: (context) {
+                            return StatefulBuilder(
+                              builder: (context, setState) {
+                                return AlertDialog(
+                                  title: Text("Submit your track:"), 
+                                  content: SingleChildScrollView(
+                                    child: Container(
+                                      margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
+                                      height: 205,
+                                      child: Column(
+                                        mainAxisAlignment: MainAxisAlignment.start,
+                                        children: [
+                                          TextField(
+                                            controller: namecontrol,
+                                            decoration: InputDecoration(
+                                              labelText: "Track name:",
+                                              border: OutlineInputBorder(
+                                                borderRadius: BorderRadius.circular(10),
+                                                borderSide: BorderSide()
+                                              ),
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 18
+                                            ),
+                                          ),
+                                          Container(
+                                            padding: EdgeInsets.fromLTRB(0, 3, 0, 0),
+                                            child: Row(
+                                              mainAxisAlignment: MainAxisAlignment.center,
+                                              children: [
+                                                RaisedButton(
+                                                  color: isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
+                                                  onPressed: () => setState(() => isPrivate = true),
+                                                  textColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topLeft: Radius.circular(7),
+                                                      bottomLeft: Radius.circular(7),
+                                                    )
+                                                  ),
+                                                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                                  child: Text("Private",
+                                                    style: TextStyle(fontSize: 18),
+                                                  ),
+                                                ),
+                                                RaisedButton(
+                                                  color: !isPrivate ? Theme.of(context).accentColor : Theme.of(context).primaryColor,
+                                                  onPressed: () => setState(() => isPrivate = false),
+                                                  textColor: Colors.white,
+                                                  shape: RoundedRectangleBorder(
+                                                    borderRadius: BorderRadius.only(
+                                                      topRight: Radius.circular(7),
+                                                      bottomRight: Radius.circular(7),
+                                                    )
+                                                  ),
+                                                  padding: EdgeInsets.fromLTRB(30, 10, 30, 10),
+                                                  child: Text("Public",
+                                                    style: TextStyle(fontSize: 18),
+                                                  ),
+                                                )
+                                              ],
+                                            ),
+                                          ),
+                                          CheckboxListTile(
+                                            dense: true,
+                                            value: isAnonymous,
+                                            onChanged: (newValue) {
+                                              setState(() {
+                                                isAnonymous = newValue;
+                                              });
+                                            },
+                                            controlAffinity: ListTileControlAffinity.leading,
+                                            contentPadding: EdgeInsets.all(0),
+                                            activeColor: Theme.of(context).accentColor,
+                                            title: Text("Anonymous",
+                                                style: TextStyle(fontSize: 18),
+                                            ),
+                                          ),
+                                          Container(
+                                            width: double.infinity,
+                                            alignment: Alignment.centerRight,
+                                            child: RaisedButton( 
+                                              onPressed: () { 
+                                                Navigator.of(context).pop(); 
+                                                submit();
+                                              },
+                                              color: Theme.of(context).accentColor,
+                                              child: Text("Confirm",
+                                                style: TextStyle(
+                                                  fontSize: 18,
+                                                  color: Colors.white
+                                                  ),
+                                              ),
+                                            ),
+                                          ), 
+                                        ],
+                                      ),
+                                    ),
+                                  ),
+                                );
+                              }
+                            );
+                          }
+                        );
+                    },
                   ),
                 );
             })(),
@@ -383,7 +383,51 @@ class _TrackingState extends State<TrackingActivity>
                     )
                   );
             }(),
-          )
+          ),
+          picturemode ? Container(
+            color: Colors.grey[700].withOpacity(0.5),
+            child: Container(
+              margin: EdgeInsets.only(
+                left: MediaQuery.of(context).size.width/2 - 100,
+                right: MediaQuery.of(context).size.width/2 - 100,
+                top: (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom -  AppBar().preferredSize.height)/2 - 160,
+                bottom: (MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom -  AppBar().preferredSize.height)/2 - 40,
+              ),
+              child: Stack(
+                fit: StackFit.expand,
+                children: [
+                  CircularProgressIndicator(
+                    strokeWidth: 10,
+                    valueColor: AlwaysStoppedAnimation<Color>(Theme.of(context).primaryColor),
+                  ),
+                  CircularProgressIndicator(
+                    strokeWidth: 8,
+                  ),
+                  FractionallySizedBox(
+                    heightFactor: 1,
+                    widthFactor: 1.5,
+                    child: Align(
+                      alignment: Alignment(0, 1.5),
+                      child: Text(
+                        "Uploading picture. Please wait.",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.grey[300],
+                          shadows: [
+                            Shadow(
+                                color: Colors.black45,
+                                blurRadius: 1,
+                                offset: Offset(1, 1.5))
+                          ]
+                        ),
+                      ),
+                    ),
+                  )
+                ],
+              ),
+            ),
+          ) : FractionallySizedBox(heightFactor: 0, widthFactor: 0),
         ],
       ),
     );
@@ -495,6 +539,7 @@ class _TrackingState extends State<TrackingActivity>
     if (pedometerStream != null) {
       pedometerStream.cancel();
     }
+    animationController.stop();
     super.dispose();
   }
 
@@ -511,12 +556,13 @@ class _TrackingState extends State<TrackingActivity>
   void takePicture() async {
     print("takePicture");
     try {
-      picturemode = true;
+      setState(() {
+        picturemode = true;
+      });
       final PickedFile picture =
           await picker.getImage(source: ImageSource.camera);
       File picfile = File(picture.path);
       print("got to path");
-      picturemode = false;
       String upstreamurl = await FirebaseApiClient.instance.postImage(picfile);
       if (upstreamurl != null) {
         print("got url $upstreamurl");
@@ -525,6 +571,9 @@ class _TrackingState extends State<TrackingActivity>
     } catch (e) {
       print(e);
     }
+    setState(() {
+      picturemode = false;
+    });
   }
 
   @override
