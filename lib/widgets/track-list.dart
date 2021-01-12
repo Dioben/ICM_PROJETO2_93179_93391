@@ -58,7 +58,7 @@ class ViewListState extends State<ViewTrackList> {
               child: Container(
                 margin: EdgeInsets.fromLTRB(10, 0, 10, 0),
                 decoration: BoxDecoration(
-                  border: Border.all(color: Theme.of(context).primaryColor)
+                  border: Border.all(color: Theme.of(context).primaryColor, width: 1)
                 ),
                 child: SmartRefresher(
                   controller: _refreshController,
@@ -70,28 +70,33 @@ class ViewListState extends State<ViewTrackList> {
                     shrinkWrap: true,
                     itemCount: courses.length,
                     itemBuilder: (context, index) =>
-                      InkWell(
-                        onTap: () => goToInfo(courses[index]),
-                        child: Ink(
-                          color: (() {
-                            if (index % 2 == 0) return Colors.grey[300];
-                            else return Colors.grey[200];
-                          })(),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              TrackItemField(title: "Track name:", value: courses[index].name),
-                              TrackItemField(title: "Runner name:", value: courses[index].user),
-                              TrackItemField(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
-                              TrackItemField(title: "Length:", value: courses[index].formattedTrackLength()),
-                              // TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
-                              // TrackItemField(title: "Rating:", value: courses[index].rating.toString()),
-                              TrackItemField(title: "Distance away:", value: (() {
-                                if (currLon != null && currLat != null) return courses[index].formattedDistance(currLat, currLon);
-                                else return "Unknown";
-                              })()),
-                            ],
-                          )
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(width: index == courses.length-1 ? 0 : 1, color: Theme.of(context).primaryColor))
+                        ),
+                        child: InkWell(
+                          onTap: () => goToInfo(courses[index]),
+                          child: Ink(
+                            color: (() {
+                              if (index % 2 == 0) return Colors.grey[300];
+                              else return Colors.grey[200];
+                            })(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(courses[index].name , style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                                TrackItemField(title: "Runner name:", value: courses[index].user, icon: Icons.person),
+                                TrackItemField(title: "Date uploaded:", value: courses[index].getFormattedTimestamp(), icon: Icons.query_builder_rounded),
+                                TrackItemField(title: "Length:", value: courses[index].formattedTrackLength(), icon: Icons.show_chart_rounded),
+                                // TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
+                                // TrackItemField(title: "Rating:", value: courses[index].rating.toString()),
+                                TrackItemField(title: "Distance away:", value: (() {
+                                  if (currLon != null && currLat != null) return courses[index].formattedDistance(currLat, currLon);
+                                  else return "Unknown";
+                                })(), icon: Icons.location_on_rounded),
+                              ],
+                            )
+                          ),
                         ),
                       ),
                   ),
@@ -184,9 +189,10 @@ class ViewListState extends State<ViewTrackList> {
 }
 
 class TrackItemField extends StatefulWidget {
-  TrackItemField({Key key, @required this.title, @required this.value}) : super(key: key);
+  TrackItemField({Key key, @required this.title, @required this.value, @required this.icon}) : super(key: key);
   final String title;
   final String value;
+  final IconData icon;
 
   @override
   _TrackItemFieldState createState() => new _TrackItemFieldState();
@@ -205,7 +211,13 @@ class _TrackItemFieldState extends State<TrackItemField> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(child: Icon(widget.icon, size: 16,), margin: EdgeInsets.fromLTRB(0,0,2,0),),
+                  Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
               Text(widget.value , style: TextStyle(fontSize: 15)),
             ],
           )

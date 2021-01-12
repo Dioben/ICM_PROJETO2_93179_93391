@@ -67,11 +67,11 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
         actions: [
           Container(
             margin: EdgeInsets.fromLTRB(7.0, 7.0, 7.0, 7.0),
-            width: 60,
+            width: 90,
             child: RaisedButton( 
               onPressed: () => goToFollowing(context),
               color: Theme.of(context).accentColor,
-              child: Text("Run",
+              child: Text("Open",
                 style: TextStyle(
                   fontSize: 16,
                   color: Colors.white
@@ -199,23 +199,28 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                     shrinkWrap: true,
                     itemCount: courses.length,
                     itemBuilder: (context, index) =>
-                      InkWell(
-                        onTap: () => goToInfo(courses[index]),
-                        child: Ink(
-                          color: (() {
-                            if (index % 2 == 0) return Colors.grey[300];
-                            else return Colors.grey[200];
-                          })(),
-                          child: Column(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [
-                              TrackItemFieldList(title: "Track name:", value: courses[index].name),
-                              TrackItemFieldList(title: "Runner name:", value: courses[index].user),
-                              TrackItemFieldList(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
-                              TrackItemFieldList(title: "Runtime:", value: courses[index].formattedRuntime()),
-                              TrackItemFieldList(title: "Rating:", value: courses[index].rating.toString()),
-                            ],
-                          )
+                      Container(
+                        decoration: BoxDecoration(
+                          border: Border(bottom: BorderSide(width: index == courses.length-1 ? 0 : 1, color: Theme.of(context).primaryColor))
+                        ),
+                        child: InkWell(
+                          onTap: () => goToInfo(courses[index]),
+                          child: Ink(
+                            color: (() {
+                              if (index % 2 == 0) return Colors.grey[300];
+                              else return Colors.grey[200];
+                            })(),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Text(courses[index].name, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
+                                TrackItemFieldList(title: "Runner name:", value: courses[index].user, icon: Icons.person),
+                                TrackItemFieldList(title: "Date uploaded:", value: courses[index].getFormattedTimestamp(), icon: Icons.query_builder_rounded,),
+                                TrackItemFieldList(title: "Runtime:", value: courses[index].formattedRuntime(), icon: Icons.timer_rounded),
+                                TrackItemFieldList(title: "Rating:", value: courses[index].rating.toString(), icon: Icons.star_border_rounded),
+                              ],
+                            )
+                          ),
                         ),
                       ),
                     ),
@@ -334,9 +339,10 @@ class _TrackItemFieldState extends State<TrackItemField> {
 
 
 class TrackItemFieldList extends StatefulWidget {
-  TrackItemFieldList({Key key, @required this.title, @required this.value}) : super(key: key);
+  TrackItemFieldList({Key key, @required this.title, @required this.value, @required this.icon}) : super(key: key);
   final String title;
   final String value;
+  final IconData icon;
 
   @override
   _TrackItemFieldListState createState() => new _TrackItemFieldListState();
@@ -354,7 +360,13 @@ class _TrackItemFieldListState extends State<TrackItemFieldList> {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Container(child: Icon(widget.icon, size: 16,), margin: EdgeInsets.fromLTRB(0,0,2,0),),
+                  Text(widget.title , style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold)),
+                ],
+              ),
               Text(widget.value , style: TextStyle(fontSize: 15)),
             ],
           )
