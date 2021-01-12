@@ -33,7 +33,7 @@ class _TrackingState extends State<TrackingActivity>
   List<LatLng> points;
   GoogleMapController mapController;
   StreamSubscription<PedestrianStatus> pedometerStream;
-  bool moving = false;
+  bool moving;
   double velocity = 0;
   bool submitted = false;
   bool picturemode = false;
@@ -43,6 +43,9 @@ class _TrackingState extends State<TrackingActivity>
   int steps_until_tracking =5;
   TextEditingController namecontrol = TextEditingController();
   final ImagePicker picker = ImagePicker();
+  AnimationController animationController;
+  Animation<double> slideAnimation;
+
   _TrackingState() {
     _markers = Set();
     _polylines = Set();
@@ -56,9 +59,6 @@ class _TrackingState extends State<TrackingActivity>
       }
     });
   }
-
-  AnimationController animationController;
-  Animation<double> slideAnimation;
 
   @override
   void initState() {
@@ -329,6 +329,71 @@ class _TrackingState extends State<TrackingActivity>
               ]
             ),
           ),
+          Container(
+            margin: EdgeInsets.fromLTRB(10, 60, MediaQuery.of(context).size.width - 50, MediaQuery.of(context).size.height - MediaQuery.of(context).padding.top - MediaQuery.of(context).padding.bottom -  AppBar().preferredSize.height - 100 ),
+            padding: EdgeInsets.zero,
+            child: () {
+              if (recording)
+                if (moving != null)
+                  if (moving)
+                    return Tooltip(
+                      message: "Moving",
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: 1,
+                            top: 1,
+                            child: Icon(Icons.directions_walk_rounded,
+                              size: 40,
+                            ),
+                          ),
+                          Icon(Icons.directions_walk_rounded,
+                            size: 40,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ]
+                      )
+                    );
+                  else
+                    return Tooltip(
+                      message: "Stopped",
+                      child: Stack(
+                        children: [
+                          Positioned(
+                            left: 1,
+                            top: 1,
+                            child: Icon(Icons.accessibility_rounded,
+                              size: 40,
+                            ),
+                          ),
+                          Icon(Icons.accessibility_rounded,
+                            size: 40,
+                            color: Theme.of(context).accentColor,
+                          ),
+                        ]
+                      )
+                    );
+                else
+                  return Tooltip(
+                    message: "Step detection not available on this device",
+                    child: Stack(
+                      children: [
+                        Positioned(
+                          left: 1,
+                          top: 1,
+                          child: Icon(Icons.do_not_step_rounded,
+                            size: 40,
+                          ),
+                        ),
+                        Icon(Icons.do_not_step_rounded,
+                          size: 40,
+                          color: Theme.of(context).accentColor,
+                        ),
+                      ]
+                    )
+                  );
+            }(),
+          )
         ],
       ),
     );
@@ -393,10 +458,26 @@ class _TrackingState extends State<TrackingActivity>
     });
     try {
       pedometerStream = Pedometer.pedestrianStatusStream.listen((event) {
-        if (event.status=="stopped" && moving==true){moving=false;}
-        if (event.status=="walking" && moving==false){moving=true;}
+        if (moving == null)
+          moving = false;
+        if (event.status=="stopped" && moving==true){
+          setState(() {
+            moving=false; 
+          });
+        } else if (event.status=="walking" && moving==false){
+          setState(() {
+            moving=false; 
+          });
+        }
       });
-    }catch(e){}
+      pedometerStream.onError((e) {
+        print(e);
+        moving = null;
+      });
+    } catch(e) {
+      print(e);
+      moving = null;
+    }
   }
 
   submit() async {
