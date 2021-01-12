@@ -125,7 +125,13 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
               itemBuilder: (BuildContext context, int index) {
                 return CachedNetworkImage(
                   progressIndicatorBuilder: (context, url, downloadProgress) => 
-                          CircularProgressIndicator(value: downloadProgress.progress),
+                    Container(
+                      margin: EdgeInsets.symmetric(
+                        vertical: (MediaQuery.of(context).size.height/1.5)/2 - 30,
+                        horizontal: (MediaQuery.of(context).size.width-40)/2 -30
+                      ),
+                      child: CircularProgressIndicator(value: downloadProgress.progress)
+                    ),
                   errorWidget: (context, url, error) => Icon(Icons.error),
                   fit: BoxFit.fitWidth,
                   imageUrl: widget.course.pictures[index],
