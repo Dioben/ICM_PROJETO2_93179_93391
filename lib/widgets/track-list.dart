@@ -6,6 +6,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:track_keeper/Queries/FirebaseApiClient.dart';
 import 'package:track_keeper/datamodel/course.dart';
 import 'package:track_keeper/widgets/track-info.dart';
+import 'package:pull_to_refresh/pull_to_refresh.dart';
 
 class ViewTrackList extends StatefulWidget {
   @override
@@ -19,6 +20,8 @@ class ViewListState extends State<ViewTrackList> {
   List<String> queryselectors = ["Anyone", "Date"];
   double currLat;
   double currLon;
+  RefreshController _refreshController =
+      RefreshController(initialRefresh: false);
 
   @override
   ViewListState() {
@@ -57,37 +60,41 @@ class ViewListState extends State<ViewTrackList> {
                 decoration: BoxDecoration(
                   border: Border.all(color: Theme.of(context).primaryColor)
                 ),
-                child: new ListView.builder(
-                  // itemExtent: 175,
-                  itemExtent: 135,
-                  scrollDirection: Axis.vertical,
-                  shrinkWrap: true,
-                  itemCount: courses.length,
-                  itemBuilder: (context, index) =>
-                    InkWell(
-                      onTap: () => goToInfo(courses[index]),
-                      child: Ink(
-                        color: (() {
-                          if (index % 2 == 0) return Colors.grey[300];
-                          else return Colors.grey[200];
-                        })(),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [
-                            TrackItemField(title: "Track name:", value: courses[index].name),
-                            TrackItemField(title: "Runner name:", value: courses[index].user),
-                            TrackItemField(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
-                            TrackItemField(title: "Length:", value: courses[index].formattedTrackLength()),
-                            // TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
-                            // TrackItemField(title: "Rating:", value: courses[index].rating.toString()),
-                            TrackItemField(title: "Distance away:", value: (() {
-                              if (currLon != null && currLat != null) return courses[index].formattedDistance(currLat, currLon);
-                              else return "Unknown";
-                            })()),
-                          ],
-                        )
+                child: SmartRefresher(
+                  controller: _refreshController,
+                  onRefresh: _onRefresh,
+                  child: ListView.builder(
+                    // itemExtent: 175,
+                    itemExtent: 135,
+                    scrollDirection: Axis.vertical,
+                    shrinkWrap: true,
+                    itemCount: courses.length,
+                    itemBuilder: (context, index) =>
+                      InkWell(
+                        onTap: () => goToInfo(courses[index]),
+                        child: Ink(
+                          color: (() {
+                            if (index % 2 == 0) return Colors.grey[300];
+                            else return Colors.grey[200];
+                          })(),
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              TrackItemField(title: "Track name:", value: courses[index].name),
+                              TrackItemField(title: "Runner name:", value: courses[index].user),
+                              TrackItemField(title: "Date uploaded:", value: courses[index].getFormattedTimestamp()),
+                              TrackItemField(title: "Length:", value: courses[index].formattedTrackLength()),
+                              // TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
+                              // TrackItemField(title: "Rating:", value: courses[index].rating.toString()),
+                              TrackItemField(title: "Distance away:", value: (() {
+                                if (currLon != null && currLat != null) return courses[index].formattedDistance(currLat, currLon);
+                                else return "Unknown";
+                              })()),
+                            ],
+                          )
+                        ),
                       ),
-                    ),
+                  ),
                 ),
               ),
             ),
@@ -97,6 +104,11 @@ class ViewListState extends State<ViewTrackList> {
             )
           ],
         ));
+  }
+
+  void _onRefresh() async {
+    doQuery();
+    _refreshController.refreshCompleted();
   }
 
   getCurrentPosition() async {
