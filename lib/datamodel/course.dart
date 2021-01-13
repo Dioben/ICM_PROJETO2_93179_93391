@@ -151,7 +151,7 @@ class Course{
      timestamp =  DateTime.now().millisecondsSinceEpoch;
      avg_speed = track_length/((runtime/1000)/3600);
      if (! iscopy)course_id+=timestamp.toString();
-     rating = (((avg_speed/6)*(runtime/30))).toInt() ; // avg human walking speed is 6km/h
+     rating = (((avg_speed/6)*((runtime/1e+3)/30))).toInt() ; // avg human walking speed is 6km/h
    }
 }
 
