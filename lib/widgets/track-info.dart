@@ -149,7 +149,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
             // ),
             TrackItemField(
               title: "Runner name:",
-              value: widget.course.user,
+              value: widget.course.anon ? "Anonymous" : widget.course.user,
               icon: Icons.person  
             ),
             TrackItemField(
@@ -243,7 +243,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(courses[index].name, style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                                TrackItemFieldList(title: "Runner name:", value: courses[index].user, icon: Icons.person),
+                                TrackItemFieldList(title: "Runner name:", value: courses[index].anon ? "Anonymous" : courses[index].user, icon: Icons.person),
                                 TrackItemFieldList(title: "Date uploaded:", value: courses[index].getFormattedTimestamp(), icon: Icons.query_builder_rounded,),
                                 TrackItemFieldList(title: "Runtime:", value: courses[index].formattedRuntime(), icon: Icons.timer_rounded),
                                 TrackItemFieldList(title: "Rating:", value: courses[index].rating.toString(), icon: Icons.star_border_rounded),

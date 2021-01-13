@@ -85,7 +85,7 @@ class ViewListState extends State<ViewTrackList> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: [
                                 Text(courses[index].name , style: TextStyle(fontSize: 17, fontWeight: FontWeight.bold)),
-                                TrackItemField(title: "Runner name:", value: courses[index].user, icon: Icons.person),
+                                TrackItemField(title: "Runner name:", value: courses[index].anon ? "Anonymous" : courses[index].user, icon: Icons.person),
                                 TrackItemField(title: "Date uploaded:", value: courses[index].getFormattedTimestamp(), icon: Icons.query_builder_rounded),
                                 TrackItemField(title: "Length:", value: courses[index].formattedTrackLength(), icon: Icons.show_chart_rounded),
                                 // TrackItemField(title: "Runtime:", value: courses[index].formattedRuntime()),
