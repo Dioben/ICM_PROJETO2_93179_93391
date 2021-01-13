@@ -122,7 +122,7 @@ class _TrackingState extends State<TrackingActivity>
                                   content: SingleChildScrollView(
                                     child: Container(
                                       margin: EdgeInsets.fromLTRB(0, 4, 0, 0),
-                                      height: 205,
+                                      height: 210,
                                       child: Column(
                                         mainAxisAlignment: MainAxisAlignment.start,
                                         children: [

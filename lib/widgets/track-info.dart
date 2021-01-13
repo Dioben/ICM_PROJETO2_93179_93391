@@ -192,11 +192,16 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
               value: widget.course.formattedAvgSpeed(),
               icon: Icons.directions_walk_rounded
             ),
+            Container(
+              height: 10,
+              width: double.infinity,
+              color: Theme.of(context).scaffoldBackgroundColor,
+            ),
             courses.length == 0 ? Container(height: 10) : Column(
               children: [
                 Container(
                   width: double.infinity,
-                  margin: EdgeInsets.fromLTRB(20, 10 , 20, 0),
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   child: AppBar(
                     title: Text("Runs made on the same course"),
                     automaticallyImplyLeading: false,
@@ -210,7 +215,7 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                     return maxSize;
                   })(),
                   width: double.infinity,
-                  margin: EdgeInsets.fromLTRB(20, 0, 20, 10),
+                  margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
                   decoration: BoxDecoration(
                     border: Border.all(
                       color: Theme.of(context).primaryColor
@@ -250,6 +255,11 @@ class _TrackInfoActivityState extends State<TrackInfoActivity> {
                     ),
                 ),
               ],
+            ),
+            Container(
+              height: 10,
+              width: double.infinity,
+              color: Theme.of(context).scaffoldBackgroundColor,
             ),
           ],
         ),
@@ -335,31 +345,42 @@ class _TrackItemFieldState extends State<TrackItemField> {
     return Column(
       children: [
         Container(
-            height: 20,
-            width: double.infinity,
-            margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.start,
-                  children: [
-                    Text(widget.value, style: TextStyle(fontSize: 17)),
-                    Container(child: Icon(widget.icon, size: 18,), margin: EdgeInsets.fromLTRB(2,0,0,0),),
-                  ],
-                ),
-              ],
-            )),
+          height: 20,
+          width: double.infinity,
+          margin: EdgeInsets.fromLTRB(20, 0, 20, 0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(widget.title , style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  Text(widget.value, style: TextStyle(fontSize: 17)),
+                  Container(child: Icon(widget.icon, size: 18,), margin: EdgeInsets.fromLTRB(2,0,0,0),),
+                ],
+              ),
+            ],
+          )
+        ),
+        Container(
+          height: 3,
+          width: double.infinity,
+          color: Theme.of(context).scaffoldBackgroundColor,
+        ),
         Container(
           height: 2,
           width: double.infinity,
-          margin: EdgeInsets.fromLTRB(20, 3, 20, 10),
+          padding: EdgeInsets.fromLTRB(20, 0, 20, 0),
           child: SizedBox(
             child: DecoratedBox(
               decoration: BoxDecoration(color: Theme.of(context).accentColor),
             ),
           ),
+        ),
+        Container(
+          height: 10,
+          width: double.infinity,
+          color: Theme.of(context).scaffoldBackgroundColor,
         ),
       ],
     );
