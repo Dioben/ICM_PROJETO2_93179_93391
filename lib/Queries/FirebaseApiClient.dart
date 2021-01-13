@@ -53,6 +53,7 @@ class FirebaseApiClient{
     user.avg_speed = user.total_tracklength/user.total_runtime/1000/3600;
     user.max_speed = max(user.max_speed, course.max_speed);
     user.top_rating=max(user.top_rating,course.rating);
+    user.coursecount++;
     if (!course.isprivate){
       mainCollection.add(course.toJson());
       userUpstream.set(user.toJson());
