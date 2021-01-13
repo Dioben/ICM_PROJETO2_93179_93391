@@ -123,10 +123,11 @@ class FirebaseApiClient{
     int ts = course.timestamp;
     QuerySnapshot result = await userCourses.where('course_id',isEqualTo: uid).get();
     Iterator it = result.docs.iterator;
+    uid = course.uID;
     while (it.moveNext()){
       DocumentSnapshot element = it.current;
       Map<String,dynamic> data = element.data();
-      if (data['ts']!=ts || data['uID']!=uid){yield Course.fromJson(data);}
+      if (data['timestamp']!=ts || data['uID']!=uid){yield Course.fromJson(data);}
     }
 
   }
