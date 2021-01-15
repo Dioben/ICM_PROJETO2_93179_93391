@@ -122,6 +122,7 @@ class MainMenu extends StatelessWidget {
   }
 
   userInfo(context) {
+    if (FirebaseApiClient.user==null){print("user future hasnt finished yet");return;}
     Navigator.push(
         context, MaterialPageRoute(builder: (context) => UserStats()));
   }
