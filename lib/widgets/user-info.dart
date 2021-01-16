@@ -9,7 +9,6 @@ class UserStats extends StatelessWidget{
   AppUser user = FirebaseApiClient.user;
   @override
   Widget build(BuildContext context) {
-    // TODO: implement build
     print(user);
     return Scaffold(appBar: AppBar(title: Text("User Stats"),),
         body:

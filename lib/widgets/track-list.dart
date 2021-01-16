@@ -40,7 +40,6 @@ class ViewListState extends State<ViewTrackList> {
     getCurrentPosition();
   }
   Widget build(BuildContext context) {
-    // TODO: implement build
     return Scaffold(
         appBar: AppBar(
           title: Text("Track List"),

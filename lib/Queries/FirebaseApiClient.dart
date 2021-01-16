@@ -36,16 +36,17 @@ class FirebaseApiClient{
 
   }
 
-  void setUser(User user) async{
+  Future<bool> setUser(User user) async{
     userUpstream= FirebaseFirestore.instance.collection("users").doc(user.uid);
     userCourses = FirebaseFirestore.instance.collection("privatecourses").doc("mandatory").collection(user.uid);
-    userUpstream.get().then((value){
-                          if (value.exists){
-                                  FirebaseApiClient.user = AppUser.fromJson(value.data());
-                          }else{
-                            FirebaseApiClient.user = AppUser(user);
-                          }
-    });
+    DocumentSnapshot value = await userUpstream.get();
+    if (value.exists){
+      FirebaseApiClient.user = AppUser.fromJson(value.data());
+      return true;
+    }else{
+      FirebaseApiClient.user = AppUser(user);
+      return false;
+    }
   }
   submitCourse(Course course) async{
     user.total_runtime+=course.runtime;
