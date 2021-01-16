@@ -31,13 +31,27 @@ class StartFuture extends StatelessWidget {
     return FutureBuilder(
         future:_initialization,
         builder: (context,snapshot){
-         if (snapshot.hasError) {return Text("Failed to connect to firebase");}
-         if (snapshot.connectionState==ConnectionState.done){
-                FirebaseAuth auth = FirebaseAuth.instance;
-                if (auth.currentUser==null) return LoginMenu();
-                FirebaseApiClient.instance.setUser(auth.currentUser);
-                  return MainMenu();}
-         return StartLoad();
+          if (snapshot.hasError) {
+            return Text("Failed to connect to firebase");
+          }
+          if (snapshot.connectionState==ConnectionState.done) {
+            FirebaseAuth auth = FirebaseAuth.instance;
+            if (auth.currentUser==null) return LoginMenu();
+            Future<bool> _setUser = FirebaseApiClient.instance.setUser(auth.currentUser);
+            return FutureBuilder(
+              future: _setUser,
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Text("Failed to set user");
+                }
+                if (snapshot.connectionState==ConnectionState.done) {
+                  return MainMenu();
+                }
+                return StartLoad();
+              },
+            );
+          }
+          return StartLoad();
         });
   }
 }
