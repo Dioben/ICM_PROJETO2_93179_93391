@@ -2,7 +2,10 @@
 
 A bike tracker made in Flutter,with location and accelerometer capabilities and social aspects
 
-## Getting Started
+## NOTE:
+This app is in a non-functional state, as backing infrastructure and API keys have been revoked
+
+## Getting Started with Flutter
 Android Studio recommends the following:
 
 - [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
